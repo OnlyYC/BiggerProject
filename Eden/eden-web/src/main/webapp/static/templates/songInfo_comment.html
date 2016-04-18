@@ -1,0 +1,51 @@
+{#foreach $T as record}
+<div class="b-a b-light padder-v padder">
+    <a href="/userHome/{$T.record.userId}" data-bjax class="pull-left thumb avatar m-r">
+        <img src="{$T.record.userAvatarUrl}">
+    </a>
+    <div class="clear">
+        <!--单个评论-->
+        <div>
+            <a href="#" data-bjax class="text-info">{$T.record.username}&nbsp;</a>:&nbsp;&nbsp;
+            <span>{$T.record.content}</span>
+            <span class="pull-right">{fmtDate($T.record.addDate,'yyyy-MM-dd hh:mm')}</span>
+        </div>
+
+        <!--回复-->
+        <div class="bg-light lter ">
+            {#foreach $T.record.childComments as childComment}
+                <div>
+                    <a href="#" class="text-info">@{$T.childComment.username}&nbsp;</a>:&nbsp;&nbsp;
+                    <span>{$T.childComment.content}</span>
+                    <span class="pull-right">{fmtDate($T.childComment.addDate,'yyyy-MM-dd hh:mm')}</span>
+                </div>
+            {#/for}
+        </div>
+
+        <!--回复的 赞-->
+        <div class="clear">
+            <div class="pull-right handle">
+                <span class="click btnPraiseComment" data-comment="{$T.record.id}">
+                    <i class="icon-like icon"></i>
+                    (<span class="praiseCount">{$T.record.praiseCount}</span>)
+                </span>
+                <span class="click dy_comment_reply"  data-target="#reply_{$T.record.id}_{$T.record$index}">
+                    回复({$T.record.childCommentCount})
+                </span>
+
+            </div>
+
+        </div>
+
+        <!--对单个评论的回复-->
+        <div style="display: none;" id="reply_{$T.record.id}_{$T.record$index}">
+            <textarea class="form-control" rows="2" id="textarea_reply_{$T.record.id}"></textarea>
+            <div class="m-t m-xs">
+                <button data-fathercommentid="{$T.record.id}" data-tar_input="#textarea_reply_{$T.record.id}"  class="btn btn-xs btn-default pull-right btnSubmitReply">发表回复</button>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+{#/for}

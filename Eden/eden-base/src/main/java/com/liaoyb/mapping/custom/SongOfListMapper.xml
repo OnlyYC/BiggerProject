@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.SongOfListMapper">
+
+    <!--榜单-->
+
+
+    <resultMap id="SongOfList_ResultMap" type="com.liaoyb.persistence.domain.dto.SongOfList">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="albumId" property="albumId" jdbcType="BIGINT" />
+        <result column="albumName" property="albumName" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="BIGINT" />
+        <result column="collectCount" property="collectCount" jdbcType="BIGINT" />
+        <result column="coverUrl" property="coverUrl" jdbcType="VARCHAR" />
+        <result column="downloadCount" property="downloadCount" jdbcType="BIGINT" />
+        <result column="flag" property="flag" jdbcType="BIGINT" />
+        <result column="info" property="info" jdbcType="VARCHAR" />
+        <result column="lyric" property="lyric" jdbcType="VARCHAR" />
+        <result column="mvId" property="mvId" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="playCount" property="playCount" jdbcType="BIGINT" />
+        <result column="pure" property="pure" jdbcType="BIGINT" />
+        <result column="releaseTime" property="releaseTime" jdbcType="BIGINT" />
+        <result column="songFileKey" property="songFileKey" jdbcType="BIGINT" />
+        <result column="songUrl" property="songUrl" jdbcType="VARCHAR" />
+        <result column="time" property="time" jdbcType="BIGINT" />
+        <result column="type" property="type" jdbcType="BIGINT" />
+        <result column="userId" property="userId" jdbcType="BIGINT" />
+        <result column="rank" property="rank"/>
+
+        <collection property="artists" ofType="Artist">
+            <id property="id" column="artistId"/>
+            <result property="name" column="artistName"/>
+        </collection>
+    </resultMap>
+
+    <!--榜单中歌曲-->
+    <select id="findSongInList" resultMap="SongOfList_ResultMap">
+       select  t.*,s_w_a.artistId as artistId,ar.name as artistName from
+       (
+        select s.*,s_w_s.rank rank from song s
+        join songlist_with_song s_w_s on s_w_s.songId=s.id where s_w_s.songlistId=#{listId}
+        )t
+        left join song_with_artist s_w_a on t.id=s_w_a.songid
+        left join artist ar on ar.id=s_w_a.artistid
+    </select>
+</mapper>

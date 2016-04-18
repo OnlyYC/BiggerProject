@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.base.MessMapper" >
+  <resultMap id="BaseResultMap" type="com.liaoyb.persistence.domain.vo.base.Mess" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="date" property="date" jdbcType="BIGINT" />
+    <result column="fromUserAvatar" property="fromUserAvatar" jdbcType="VARCHAR" />
+    <result column="fromUser" property="fromUser" jdbcType="BIGINT" />
+    <result column="fromUserName" property="fromUserName" jdbcType="VARCHAR" />
+    <result column="looked" property="looked" jdbcType="BIGINT" />
+    <result column="toUser" property="toUser" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="BIGINT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.liaoyb.persistence.domain.vo.base.Mess" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, date, fromUserAvatar, fromUser, fromUserName, looked, toUser, type
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.liaoyb.persistence.domain.vo.base.MessExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from mess
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.liaoyb.persistence.domain.vo.base.MessExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mess
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from mess
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mess
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.liaoyb.persistence.domain.vo.base.MessExample" >
+    delete from mess
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.liaoyb.persistence.domain.vo.base.Mess" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into mess (date, fromUserAvatar, fromUser, 
+      fromUserName, looked, toUser, 
+      type, content)
+    values (#{date,jdbcType=BIGINT}, #{fromUserAvatar,jdbcType=VARCHAR}, #{fromUser,jdbcType=BIGINT}, 
+      #{fromUserName,jdbcType=VARCHAR}, #{looked,jdbcType=BIGINT}, #{toUser,jdbcType=BIGINT}, 
+      #{type,jdbcType=BIGINT}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.liaoyb.persistence.domain.vo.base.Mess" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into mess
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="date != null" >
+        date,
+      </if>
+      <if test="fromUserAvatar != null" >
+        fromUserAvatar,
+      </if>
+      <if test="fromUser != null" >
+        fromUser,
+      </if>
+      <if test="fromUserName != null" >
+        fromUserName,
+      </if>
+      <if test="looked != null" >
+        looked,
+      </if>
+      <if test="toUser != null" >
+        toUser,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="date != null" >
+        #{date,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserAvatar != null" >
+        #{fromUserAvatar,jdbcType=VARCHAR},
+      </if>
+      <if test="fromUser != null" >
+        #{fromUser,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserName != null" >
+        #{fromUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="looked != null" >
+        #{looked,jdbcType=BIGINT},
+      </if>
+      <if test="toUser != null" >
+        #{toUser,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=BIGINT},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.liaoyb.persistence.domain.vo.base.MessExample" resultType="java.lang.Integer" >
+    select count(*) from mess
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update mess
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.date != null" >
+        date = #{record.date,jdbcType=BIGINT},
+      </if>
+      <if test="record.fromUserAvatar != null" >
+        fromUserAvatar = #{record.fromUserAvatar,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fromUser != null" >
+        fromUser = #{record.fromUser,jdbcType=BIGINT},
+      </if>
+      <if test="record.fromUserName != null" >
+        fromUserName = #{record.fromUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.looked != null" >
+        looked = #{record.looked,jdbcType=BIGINT},
+      </if>
+      <if test="record.toUser != null" >
+        toUser = #{record.toUser,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=BIGINT},
+      </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update mess
+    set id = #{record.id,jdbcType=BIGINT},
+      date = #{record.date,jdbcType=BIGINT},
+      fromUserAvatar = #{record.fromUserAvatar,jdbcType=VARCHAR},
+      fromUser = #{record.fromUser,jdbcType=BIGINT},
+      fromUserName = #{record.fromUserName,jdbcType=VARCHAR},
+      looked = #{record.looked,jdbcType=BIGINT},
+      toUser = #{record.toUser,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=BIGINT},
+      content = #{record.content,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update mess
+    set id = #{record.id,jdbcType=BIGINT},
+      date = #{record.date,jdbcType=BIGINT},
+      fromUserAvatar = #{record.fromUserAvatar,jdbcType=VARCHAR},
+      fromUser = #{record.fromUser,jdbcType=BIGINT},
+      fromUserName = #{record.fromUserName,jdbcType=VARCHAR},
+      looked = #{record.looked,jdbcType=BIGINT},
+      toUser = #{record.toUser,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liaoyb.persistence.domain.vo.base.Mess" >
+    update mess
+    <set >
+      <if test="date != null" >
+        date = #{date,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserAvatar != null" >
+        fromUserAvatar = #{fromUserAvatar,jdbcType=VARCHAR},
+      </if>
+      <if test="fromUser != null" >
+        fromUser = #{fromUser,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserName != null" >
+        fromUserName = #{fromUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="looked != null" >
+        looked = #{looked,jdbcType=BIGINT},
+      </if>
+      <if test="toUser != null" >
+        toUser = #{toUser,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=BIGINT},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.liaoyb.persistence.domain.vo.base.Mess" >
+    update mess
+    set date = #{date,jdbcType=BIGINT},
+      fromUserAvatar = #{fromUserAvatar,jdbcType=VARCHAR},
+      fromUser = #{fromUser,jdbcType=BIGINT},
+      fromUserName = #{fromUserName,jdbcType=VARCHAR},
+      looked = #{looked,jdbcType=BIGINT},
+      toUser = #{toUser,jdbcType=BIGINT},
+      type = #{type,jdbcType=BIGINT},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liaoyb.persistence.domain.vo.base.Mess" >
+    update mess
+    set date = #{date,jdbcType=BIGINT},
+      fromUserAvatar = #{fromUserAvatar,jdbcType=VARCHAR},
+      fromUser = #{fromUser,jdbcType=BIGINT},
+      fromUserName = #{fromUserName,jdbcType=VARCHAR},
+      looked = #{looked,jdbcType=BIGINT},
+      toUser = #{toUser,jdbcType=BIGINT},
+      type = #{type,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

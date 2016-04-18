@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.base.SonglistWithTagMapper" >
+  <resultMap id="BaseResultMap" type="com.liaoyb.persistence.domain.vo.base.SonglistWithTag" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ratio" property="ratio" jdbcType="REAL" />
+    <result column="songlistId" property="songlistId" jdbcType="BIGINT" />
+    <result column="tagId" property="tagId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, ratio, songlistId, tagId
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistWithTagExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from songlist_with_tag
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from songlist_with_tag
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from songlist_with_tag
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistWithTagExample" >
+    delete from songlist_with_tag
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistWithTag" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into songlist_with_tag (ratio, songlistId, tagId
+      )
+    values (#{ratio,jdbcType=REAL}, #{songlistId,jdbcType=BIGINT}, #{tagId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistWithTag" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into songlist_with_tag
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ratio != null" >
+        ratio,
+      </if>
+      <if test="songlistId != null" >
+        songlistId,
+      </if>
+      <if test="tagId != null" >
+        tagId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ratio != null" >
+        #{ratio,jdbcType=REAL},
+      </if>
+      <if test="songlistId != null" >
+        #{songlistId,jdbcType=BIGINT},
+      </if>
+      <if test="tagId != null" >
+        #{tagId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistWithTagExample" resultType="java.lang.Integer" >
+    select count(*) from songlist_with_tag
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update songlist_with_tag
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.ratio != null" >
+        ratio = #{record.ratio,jdbcType=REAL},
+      </if>
+      <if test="record.songlistId != null" >
+        songlistId = #{record.songlistId,jdbcType=BIGINT},
+      </if>
+      <if test="record.tagId != null" >
+        tagId = #{record.tagId,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update songlist_with_tag
+    set id = #{record.id,jdbcType=BIGINT},
+      ratio = #{record.ratio,jdbcType=REAL},
+      songlistId = #{record.songlistId,jdbcType=BIGINT},
+      tagId = #{record.tagId,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistWithTag" >
+    update songlist_with_tag
+    <set >
+      <if test="ratio != null" >
+        ratio = #{ratio,jdbcType=REAL},
+      </if>
+      <if test="songlistId != null" >
+        songlistId = #{songlistId,jdbcType=BIGINT},
+      </if>
+      <if test="tagId != null" >
+        tagId = #{tagId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistWithTag" >
+    update songlist_with_tag
+    set ratio = #{ratio,jdbcType=REAL},
+      songlistId = #{songlistId,jdbcType=BIGINT},
+      tagId = #{tagId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

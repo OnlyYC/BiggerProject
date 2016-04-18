@@ -1,0 +1,22 @@
+{#foreach $T as record}
+<div class="col-xs-4 col-sm-3 col-lg-2">
+    <div class="item">
+        <div class="pos-rlt ">
+            <span class="top">
+                <span class="pull-right">
+                    <i class="icon-earphones icon padder">{fmtPlayCount($T.record.playCount)}</i>
+                </span>
+            </span>
+            <div class="item-overlay transparency  r r-2x bg-light songlist" data-songlistid="{$T.record.id}">
+                <div class="bottom text-center m-t-n">
+                    <span class="click"><i class="fa fa-play-circle-o i-3x pull-right m-sm songlist_play" data-songlistid="{$T.record.id}"></i></span>
+                </div>
+            </div>
+            <a href="/songlist/{$T.record.id}" data-bjax><img src="{$T.record.coverUrl}" alt="" class="r r-2x img-full "></a>
+        </div>
+        <div class="padder-v">
+            <a href="/songlist/{$T.record.id}" data-bjax class="text-ellipsis">{$T.record.listName}</a>
+        </div>
+    </div>
+</div>
+{#/for}

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.SongtypeMapperCustom">
+
+    <resultMap id="SongtypeCustom_ResultMap" type="SongtypeCustom">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="fatherId" property="fatherId" jdbcType="BIGINT" />
+        <result column="typeName" property="typeName" jdbcType="VARCHAR" />
+
+        <!--关联属性-->
+        <collection property="childSongtype" ofType="Songtype">
+            <id property="id" column="child_id"/>
+            <result property="fatherId" column="child_fatherId"/>
+            <result property="typeName" column="child_typeName"/>
+        </collection>
+    </resultMap>
+
+    <select id="findAllSongtypeCustoms" resultMap="SongtypeCustom_ResultMap">
+      select songtype1.*,songtype2.id as child_id,songtype2.fatherId as child_fatherId,songtype2.typeName as child_typeName  from songtype songtype1 left join songtype songtype2 on songtype2.fatherId=songtype1.id where songtype1.fatherId is  null
+
+    </select>
+
+    <!--根据歌曲分类找到其中的歌曲扩展,type表示mv或歌曲-->
+    <select id="findSongCustomsBySongtype" resultMap="com.liaoyb.persistence.dao.custom.SongMapperCustom.SongCustom_ResultMap">
+        <include refid="com.liaoyb.persistence.dao.custom.SongMapperCustom.songCustom_Base_Sql"/>
+       where s.id
+        in
+        (select myinner.songId from (
+        select s_w_t.songId,count(s_w_t.typeId) co from song_with_type s_w_t
+        <where>
+        <if test="typeIds!=null and typeIds.size()!=0">
+            s_w_t.typeId in
+              <foreach collection="typeIds" item="typeId" open="(" separator="," close=")">
+                  #{typeId}
+              </foreach>
+
+        </if>
+        </where>
+        group by s_w_t.songId
+        <if test="typeIds!=null and typeIds.size()!=0">
+        having co=(
+        select sum(0
+        <foreach collection="typeIds" item="typeId" >
+            +1
+        </foreach>
+        )from dual
+        )
+        </if>
+
+        )myinner
+        )
+        <if test="type!=null">
+            and s.type=#{type}
+        </if>
+
+    </select>
+
+    <!--根据歌曲分类找到其中的歌单-->
+    <select id="findSonglistBySongtype" resultType="Songlist">
+        select * from songlist where id
+        in
+        (select myinner.songlistId from (
+        select s_w_t.songlistId,count(s_w_t.typeId) co from songlist_with_type s_w_t
+        <where>
+            <if test="typeIds!=null and typeIds.size()!=0">
+                s_w_t.typeId in
+                <foreach collection="typeIds" item="typeId" open="(" separator="," close=")">
+                    #{typeId}
+                </foreach>
+
+            </if>
+        </where>
+        group by s_w_t.songlistId
+        <if test="typeIds!=null and typeIds.size()!=0">
+            having co=(
+            select sum(0
+            <foreach collection="typeIds" item="typeId" >
+                +1
+            </foreach>
+            )from dual
+            )
+        </if>
+
+        )myinner
+        )
+    </select>
+</mapper>

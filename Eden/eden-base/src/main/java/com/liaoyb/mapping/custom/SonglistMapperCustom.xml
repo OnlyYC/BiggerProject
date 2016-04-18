@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.SonglistMapperCustom">
+
+    <resultMap id="songlistDto_ResultMap" type="com.liaoyb.persistence.domain.dto.SonglistDto">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="collectCount" property="collectCount" jdbcType="BIGINT" />
+        <result column="coverUrl" property="coverUrl" jdbcType="VARCHAR" />
+        <result column="createTime" property="createTime" jdbcType="BIGINT" />
+        <result column="flag" property="flag" jdbcType="BIGINT" />
+        <result column="info" property="info" jdbcType="VARCHAR" />
+        <result column="lastUpdate" property="lastUpdate" jdbcType="BIGINT" />
+        <result column="listName" property="listName" jdbcType="VARCHAR" />
+        <result column="playCount" property="playCount" jdbcType="BIGINT" />
+        <result column="type" property="type" jdbcType="BIGINT" />
+        <result column="userId" property="userId" jdbcType="BIGINT" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+
+        <result column="userAvatar" property="userAvatar"/>
+        <result column="userOwn" property="userOwn"/>
+
+        <collection property="tags" ofType="Tag" column="id"  select="findTagForSonglist"/>
+
+    </resultMap>
+
+    <!--歌单推荐,根据播放量，收藏量,普通歌单-->
+    <select id="findSonglistRecommend" resultType="com.liaoyb.persistence.domain.vo.base.Songlist">
+        select * from songlist where type=1 order by (collectCount*0.7+playCount*0.3) desc
+    </select>
+
+    <!--包含这首歌的歌单,按播放量倒序-->
+    <select id="findSonglistCustomsIncludeSong" resultType="com.liaoyb.persistence.domain.vo.base.Songlist">
+        select sl.* from songlist sl where sl.id in
+        (
+          select DISTINCT  s_w_s.songlistId from songlist_with_song s_w_s where s_w_s.songId=#{songId}
+        )
+        and type=1
+        order by sl.playCount desc
+    </select>
+
+    <!--歌单条件查询-->
+    <select id="findsonglistQuery" resultType="com.liaoyb.persistence.domain.vo.base.Songlist">
+        select * from songlist
+        <where>
+            <if test="condition!=null">
+                <if test="condition.id!=null">
+                    and id=#{condition.id}
+                </if>
+                <if test="condition.type!=null">
+                    and type=#{condition.type}
+                </if>
+                <if test="condition.listName!=null">
+                    and listName like CONCAT(CONCAT('%',#{condition.listName}),'%')
+                </if>
+                <if test="condition.userId!=null">
+                    and userId=#{condition.userId}
+                </if>
+                <if test="condition.flag!=null">
+                    and flag=#{condition.flag}
+                </if>
+            </if>
+        </where>
+    </select>
+
+
+    <!--SonglistDto-->
+    <select id="findSonglistDto" resultMap="songlistDto_ResultMap">
+        select sl.*,u.avatarUrl userAvatar,
+        (IF(sl.userId=#{userId},1,0))as userOwn
+         from songlist sl LEFT JOIN user u on sl.userId=u.id where sl.id=#{songlistId}
+    </select>
+
+    <!--歌单的tag-->
+    <select id="findTagForSonglist" resultType="com.liaoyb.persistence.domain.vo.base.Tag">
+        select t.* from tag t where t.id in(select s_w_t.tagId from songlist_with_tag s_w_t where s_w_t.songlistId=#{songlistId})
+    </select>
+
+    <!--歌单推荐(根据用户的喜好来推荐),不能是用户自己的歌单-->
+    <select id="findSonglistUserLike" resultType="com.liaoyb.persistence.domain.vo.base.Songlist">
+      select sl.* from songlist  sl
+      <where>
+          and sl.userId!=#{userId}
+          and sl.flag=1
+          and sl.type=1
+      </where>
+       order by(select sum( ifnull((select s_l.ratio from songlist_with_tag s_l where s_l.songlistId=sl.id and s_l.tagId=ta.id),0)*ifnull((select u_p.factor from user_prefer u_p where u_p.userId=#{userId}  and u_p.tagId=ta.id),0)) from tag ta) desc
+    </select>
+
+    <!--歌单搜索,不显示我喜欢歌单-->
+    <select id="findSonglist" resultType="com.liaoyb.persistence.domain.dto.SonglistCountDto">
+        SELECT sli.*,
+        COUNT(s_w_s.id) songCount
+         from
+         (
+         SELECT sl.* FROM
+         songlist sl
+         WHERE sl.flag=1
+         AND sl.listName!='我喜欢'
+         AND (
+         sl.listName like CONCAT(CONCAT('%',#{searchText}),'%')
+         OR sl.info like CONCAT(CONCAT('%',#{searchText}),'%')
+         )
+         )sli
+          LEFT JOIN songlist_with_song s_w_s ON sli.id=s_w_s.songlistId
+         GROUP BY sli.id
+    </select>
+
+
+</mapper>

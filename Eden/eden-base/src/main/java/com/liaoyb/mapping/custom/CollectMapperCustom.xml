@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.CollectMapperCustom">
+
+    <!--收藏查找-->
+    <select id="findCollect" resultType="com.liaoyb.persistence.domain.vo.base.Collect">
+        SELECT * FROM  collect
+        <where>
+            <if test="condition.id!=null">
+                AND id=#{condition.id}
+            </if>
+            <if test="condition.targetId!=null">
+                AND targetId=#{condition.targetId}
+            </if>
+            <if test="condition.userId!=null">
+                AND userId=#{condition.userId}
+            </if>
+            <if test="condition.collectType!=null">
+                AND collectType=#{condition.collectType}
+            </if>
+        </where>
+    </select>
+</mapper>

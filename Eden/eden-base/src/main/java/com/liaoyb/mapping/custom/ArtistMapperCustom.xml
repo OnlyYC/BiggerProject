@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.ArtistMapperCustom">
+
+
+    <!--ArtistDto,Sql-->
+    <sql id="ArtistDto_Sql">
+        select a.*,
+        (select count(1) from song_with_artist s_w_a LEFT JOIN song so on s_w_a.songId=so.id where s_w_a.artistId=a.id and so.type=1 ) as singleSongCount ,
+        (select count(1) from album al where al.artistId=a.id) as albumCount,
+        (select count(1) from song_with_artist s_w_a LEFT JOIN song so on s_w_a.songId=so.id where s_w_a.artistId=a.id and so.type=2) as mvCount,
+        zd1.text as sexText,
+        zd2.text as countryText
+         from artist a left join zd zd1 on (a.sex=zd1.code and zd1.type='sex' ) left join zd zd2 on(a.country=zd2.code and zd2.type='country')
+    </sql>
+
+
+    <select id="findArtistsBySongId" resultType="com.liaoyb.persistence.domain.vo.base.Artist">
+        select * from artist where id in(select artistId from song_with_artist where songId=#{songId})
+
+    </select>
+
+
+    <!--热门艺术家,根据关注数-->
+    <select id="findHotArtists" resultType="com.liaoyb.persistence.domain.vo.base.Artist">
+        select * from artist order by watchCount DESC
+    </select>
+
+    <!--艺术家查询(名称，国籍，地区,性别和组合)-->
+    <select id="artistsQuery" resultType="com.liaoyb.persistence.domain.vo.base.Artist" parameterType="Artist">
+        select * from artist
+        <where>
+            <if test="artist!=null">
+                <if test="artist.name!=null and artist.name!=''">
+                    and name like CONCAT(CONCAT('%',#{artist.name}),'%')
+                </if>
+                <if test="artist.country!=null">
+                    and country=#{artist.country}
+                </if>
+                <if test="artist.sex!=null">
+                    and sex=#{artist.sex}
+                </if>
+                <if test="artist.area!=null and artist.area!=-1">
+                    and area=#{artist.area}
+                </if>
+                <if test="artist.artistType!=null">
+                    and artistType=#{artist.artistType}
+                </if>
+
+            </if>
+        </where>
+    </select>
+
+    <!--艺术家的专辑-->
+    <select id="findAlbumsBelongToArtist" resultType="com.liaoyb.persistence.domain.vo.base.Album" parameterType="long">
+        select * from album where artistId=#{artistId}
+    </select>
+
+    <!--艺术家的所有mv或者音乐-->
+    <select id="findMvBelongToArtist" resultMap="com.liaoyb.persistence.dao.custom.SongMapperCustom.SongCustom_ResultMap">
+        <include refid="com.liaoyb.persistence.dao.custom.SongMapperCustom.songCustom_Base_Sql"/>
+        where s.id in
+        (
+          select songId from song_with_artist where artistId=#{artistId}
+        )
+        and s.type=#{type}
+    </select>
+
+
+    <!--找到艺术家dto根据id-->
+    <select id="findArtistDtoById" resultType="com.liaoyb.persistence.domain.dto.ArtistDto">
+        select a.*,
+        (select count(1) from song_with_artist s_w_a LEFT JOIN song so on s_w_a.songId=so.id where s_w_a.artistId=a.id and so.type=1 ) as singleSongCount ,
+        (select count(1) from album al where al.artistId=a.id) as albumCount,
+        (select count(1) from song_with_artist s_w_a LEFT JOIN song so on s_w_a.songId=so.id where s_w_a.artistId=a.id and so.type=2) as mvCount,
+        zd1.text as sexText,
+        zd2.text as countryText
+         from artist a left join zd zd1 on (a.sex=zd1.code and zd1.type='sex' ) left join zd zd2 on(a.country=zd2.code and zd2.type='country') where a.id=#{artistId}
+    </select>
+
+    <!--歌手搜索-->
+    <select id="findArtist" resultType="com.liaoyb.persistence.domain.dto.ArtistDto">
+
+        <include refid="ArtistDto_Sql"/>
+         WHERE
+        a.name like CONCAT(CONCAT('%',#{searchText}),'%')
+        OR a.info like CONCAT(CONCAT('%',#{searchText}),'%')
+        OR a.member like CONCAT(CONCAT('%',#{searchText}),'%')
+    </select>
+
+
+</mapper>

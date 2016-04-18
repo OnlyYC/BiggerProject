@@ -1,0 +1,31 @@
+
+{#param name=rank value=1}
+{#foreach $T as record}
+<div class="list-group-item item row m">
+    <span class="h2 padder ">{$P.rank++}</span>
+    <div class="thumb pos-rlt">
+        <div class="item-overlay  r r-2x active">
+            <div class="center text-center  m-t-n">
+                <span class="click "><i class="fa fa-play-circle i-2x text-white"></i></span>
+            </div>
+        </div>
+        <a href="#"><img src="{$T.record.poster}" alt="" class="r r-2x img-full"></a>
+    </div>
+
+
+
+
+    <a href="/song/{$T.record.song_id}" data-bjax class="w">{$T.record.title}</a>
+    <span  class="w">
+        {#foreach $T.record.artists as artist}
+                    {#if $T.artist$index>0}
+                        &&{$T.artist.name}
+                    {#else}
+                        {$T.artist.name}
+                    {#/if}
+            {#/for}
+    </span>
+    <a href="/album/{$T.record.albumId}" data-bjax class="w">{$T.record.albumName}</a>
+    <span class="pull-right h3 padder m">{fmtSongTime($T.record.time)}</span>
+</div>
+{#/for}

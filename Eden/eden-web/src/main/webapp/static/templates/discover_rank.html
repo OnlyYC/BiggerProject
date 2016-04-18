@@ -1,0 +1,18 @@
+{#foreach $T as record}
+<div class="list-group-item clear padder-v">
+    <span class="pull-left h3 padder">{$T.record.rank}</span>
+    <i class="fa fa-play-circle-o h4 click song_play" data-songid="{$T.record.song_id}"></i>
+    <a href="/song/{$T.record.song_id}" data-bjax class="m-l">{$T.record.title}</a>
+    <span  class="pull-right">
+
+        {#foreach $T.record.artists as artist}
+                {#if $T.artist$index>0}
+                    &&{$T.artist.name}
+                {#else}
+                    {$T.artist.name}
+                {#/if}
+        {#/for}
+
+    </span>
+</div>
+{#/for}

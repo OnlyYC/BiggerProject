@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.UserlistenMapperCustom">
+
+    <!--用户播放历史条件查询-->
+    <select id="query" resultType="com.liaoyb.persistence.domain.vo.base.Userlisten" parameterType="Userlisten">
+        select * from userlisten
+        <where>
+            <if test="condition!=null">
+                <if test="condition.songId!=null">
+                    and songId=#{condition.songId}
+                </if>
+                <if test="condition.userId!=null">
+                    and userId=#{condition.userId}
+                </if>
+            </if>
+        </where>
+    </select>
+</mapper>

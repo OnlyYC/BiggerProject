@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" class="app">
+<head>
+    <meta charset="utf-8"/>
+    <title>Music</title>
+    <meta name="description"
+          content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/jPlayer/jplayer.flat.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/bootstrap.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/animate.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/font-awesome.min.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/simple-line-icons.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/font.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/app.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.css" type="text/css"/>
+
+
+    <link rel="stylesheet" href="{$baseUrl}/static/css/loading/ball-clip-rotate-multiple.css">
+    <script>
+        var baseUrl = '{$baseUrl}';
+    </script>
+
+
+</head>
+<body class="">
+<!--添加歌曲到歌单,模态框-->
+<div class="modal fade" id="mysonglist_modal" >
+
+</div>
+
+<!--登录、注册弹窗-->
+<div class="modal fade login" id="loginModal">
+    <div class="modal-dialog login animated">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Login with</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box">
+                    <div class="content">
+                        <div class="social">
+                            <a id="google_login" class="circle qq thumb" href="javascript:void(0);">
+                                <img src="{$baseUrl}/static/images/qq.png" />
+                            </a>
+                        </div>
+                        <div class="division">
+                            <div class="line l"></div>
+                            <span>or</span>
+                            <div class="line r"></div>
+                        </div>
+                        <div class="error"></div>
+                        <div class="form loginBox">
+                            <form method="post" id="login_form">
+                                <input  class="form-control" type="text" placeholder="Email" name="email">
+                                <input  class="form-control" type="password" placeholder="Password" name="password">
+                            </form>
+                            <button class="btn btn-default btn-login"   onclick="loginAjax()">Login</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="content registerBox" style="display:none;">
+                        <div class="form">
+                            <form method="post" id="register_form" class="m-b">
+                                <input name="email" class="form-control" type="text" placeholder="Email" >
+                                <input name="password" class="form-control" type="password" placeholder="Password">
+                                <input name="password_confirmation" class="form-control" type="password" placeholder="Repeat Password" >
+                                <img src="{$baseUrl}/CodeController/code" id="code_img" onclick="refreshCode()" class="col-md-6 click">
+                                <input name="code" class="form-control" type="text" placeholder="code">
+
+                            </form>
+                            <button class="btn btn-default btn-register m-t" id="register_submit_btn" disabled >Create account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="forgot login-footer">
+                            <span>Looking to
+                                 <a href="javascript: showRegisterForm();">create an account</a>
+                            ?</span>
+                </div>
+                <div class="forgot register-footer" style="display:none">
+                    <span>Already have an account?</span>
+                    <a href="javascript: showLoginForm();">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="vbox">
+
+    <!--上侧导航 up-->
+    <header class="bg-white-only header header-md navbar navbar-fixed-top-xs">
+        <div class="navbar-header aside bg-info nav-xs">
+            <a class="btn btn-link visible-xs" data-toggle="class:nav-off-screen,open" data-target="#nav,html">
+                <i class="icon-list"></i>
+            </a>
+            <a href="/index" data-bjax class="navbar-brand text-lt">
+                <i class="icon-earphones"></i>
+                <img src="images/logo.png" alt="." class="hide">
+                <span class="hidden-nav-xs m-l-sm">EDEN</span>
+            </a>
+            <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".user">
+                <i class="icon-settings"></i>
+            </a>
+        </div>
+        <ul class="nav navbar-nav hidden-xs">
+            <li>
+                <a href="#nav,.navbar-header" data-toggle="class:nav-xs,nav-xs" class="text-muted">
+                    <i class="fa fa-indent text"></i>
+                    <i class="fa fa-dedent text-active"></i>
+                </a>
+            </li>
+        </ul>
+        <form class="navbar-form navbar-left input-s-lg m-t m-l-n-xs hidden-xs" role="search">
+            <div class="form-group">
+                <div class="input-group">
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-sm bg-white btn-icon rounded"><i class="fa fa-search"></i></button>
+            </span>
+                    <input type="text" class="form-control input-sm no-border rounded"
+                           placeholder="Search songs, albums...">
+                </div>
+            </div>
+        </form>
+        <div class="navbar-right ">
+            <ul class="nav navbar-nav m-n hidden-xs nav-user user">
+                <li class="hidden-xs">
+                    <a href="#" class="dropdown-toggle lt" data-toggle="dropdown">
+                        <i class="icon-bell"></i>
+                        <span class="badge badge-sm up bg-danger count">2</span>
+                    </a>
+                    <section class="dropdown-menu aside-xl animated fadeInUp">
+                        <section class="panel bg-white">
+                            <div class="panel-heading b-light bg-light">
+                                <strong>You have <span class="count">2</span> notifications</strong>
+                            </div>
+                            <div class="list-group list-group-alt">
+                                <a href="#" class="media list-group-item">
+                    <span class="pull-left thumb-sm">
+                      <img src="images/a0.png" alt="..." class="img-circle">
+                    </span>
+                    <span class="media-body block m-b-none">
+                      Use awesome animate.css<br>
+                      <small class="text-muted">10 minutes ago</small>
+                    </span>
+                                </a>
+                                <a href="#" class="media list-group-item">
+                    <span class="media-body block m-b-none">
+                      1.0 initial released<br>
+                      <small class="text-muted">1 hour ago</small>
+                    </span>
+                                </a>
+                            </div>
+                            <div class="panel-footer text-sm">
+                                <a href="#" class="pull-right"><i class="fa fa-cog"></i></a>
+                                <a href="#notes" data-toggle="class:show animated fadeInRight">See all the
+                                    notifications</a>
+                            </div>
+                        </section>
+                    </section>
+                </li>
+
+                <!--用户已登录-->
+                {if $currentUser}
+                <li class=" dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle bg clear" data-toggle="dropdown">
+                        <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
+                            <img src="{$currentUser.avatarUrl}" alt="...">
+                        </span>
+                        {$currentUser.name} <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu animated fadeInRight">
+                        <li>
+                            <span class="arrow top"></span>
+                            <a href="listen.html">Settings</a>
+                        </li>
+                        <li>
+                            <a href="profile.html">Profile</a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="badge bg-danger pull-right">3</span>
+                                Notifications
+                            </a>
+                        </li>
+                        <li>
+                            <a href="docs.html">Help</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="modal.lockme.html" data-toggle="ajaxModal">Logout</a>
+                        </li>
+                    </ul>
+                </li>
+                {else}
+                <!--未登录-->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle bg clear" data-toggle="dropdown">
+
+                        <i class="icon-user icon text-lg"></i>&nbsp;未登录 <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu animated fadeInRight">
+                        <li>
+                            <span class="arrow top"></span>
+                            <a href="javascript:void(0);" id="login">登录</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);"  id="register">注册</a>
+                        </li>
+
+                    </ul>
+                </li>
+                {/if}
+
+            </ul>
+        </div>
+    </header>
+    <section>
+        <section class="hbox stretch">
+            <!-- .aside left 左边导航栏 -->
+            <aside class="bg-black dk nav-xs aside hidden-print" id="nav">
+                <section class="vbox">
+                    <section class="w-f-md scrollable">
+                        <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0"
+                             data-size="10px" data-railOpacity="0.2">
+
+
+                            <!-- nav -->
+                            <nav class="nav-primary hidden-xs">
+                                <ul class="nav bg clearfix">
+                                    <li class="hidden-nav-xs padder m-t m-b-sm text-xs text-muted">
+                                        Discover
+                                    </li>
+                                    <li>
+                                        <a href="/discover" data-bjax>
+                                            <i class="icon-music-tone-alt icon text-info"></i>
+                                            <span class="font-bold">发现音乐</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/mv" data-bjax>
+                                            <i class="icon-social-youtube icon "></i>
+                                            <span class="font-bold">MV</span>
+                                        </a>
+                                    </li>
+
+                                    <li class="m-b hidden-nav-xs"></li>
+                                </ul>
+                                <ul class="nav" data-ride="collapse">
+                                    <li class="hidden-nav-xs padder m-t m-b-sm text-xs text-muted">
+                                        Mine
+                                    </li>
+                                    <li>
+                                        <a href="events.html">
+                                            <i class="icon-users icon"></i>
+                                            <span class="font-bold">朋友</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/myArtist" data-bjax>
+                                            <i class="icon-user-following icon"></i>
+                                            <span class="font-bold">我的歌手</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/myMV" data-bjax>
+                                            <i class="icon-film icon"></i>
+                                            <span class="font-bold">我的MV</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/myUpload" data-bjax>
+                                            <i class="icon-cloud-upload icon"></i>
+                                            <span class="font-bold">我的上传</span>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </nav>
+                            <!-- / nav -->
+                        </div>
+                    </section>
+
+                </section>
+            </aside>
+
+            <!--中间内容 content -->
+            <section id="parContainer">
+                <section class="hbox stretch" id="content">
+
+                    <!--初始化-->
+                    <script>
+
+                        var songInfo=eval({$songJson});
+
+                        //延迟，等全部插件加载后
+                        function init() {
+                            //显示音乐播放器
+                            $("#footerPlayer").slideDown();
+                            console.info("songInfo init");
+
+                            if(typeof(myPlaylist) == "undefined"||typeof(myPlaylist.playlist) == "undefined"){
+                                var si=setInterval(function(){
+                                    if(myPlaylist.playlist){
+                                        //取消定时
+                                        clearInterval(si);
+                                        addToPlayList(songInfo, true);
+                                    }
+
+                                },500);
+                            }else{
+                                addToPlayList(songInfo, true);
+                            }
+
+
+                            //获取评论
+                            $("#comment_body").jtemplatePag({
+                                template_url: "{$baseUrl}/static/templates/songInfo_comment.html",
+                                data_url: "{$baseUrl}/api/comment/findComments",
+                                isNeedPage: true,
+                                jTemplateSetting:{
+                                    filter_data:false
+                                },
+                                parameters: {
+                                    type: 1,
+                                    belongId: songInfo.song_id
+                                },
+                                complete: function (data,element) {
+                                    //设置评论总数
+                                    $("#comments_count").text(data.total);
+                                    //如果评论数为0
+                                    if (data.total == 0) {
+                                        $("#comment_body").append("<h3>还没有评论</h3>");
+                                    }
+
+                                    $(element.find(".dy_comment_reply")).hideAndShow({
+
+                                    });
+
+                                }
+                            });
+
+                            //包含这首歌的歌单
+                            $("#songlist_include_song").jtemplatePag({
+                                template_url: "{$baseUrl}/static/templates/songInfo_songlist_includ_song.html",
+                                data_url: "{$baseUrl}/api/songlist/songListIncludeSong",
+                                isNeedPage: false,
+                                pageSize: 4,
+                                parameters: {
+                                    songId: songInfo.song_id
+                                }
+                            });
+
+                            //相似歌曲
+                            $("#similarSong").jtemplatePag({
+                                template_url: "{$baseUrl}/static/templates/songInfo_similarSong.html",
+                                data_url: "{$baseUrl}/api/song/songSimilar",
+                                isNeedPage: false,
+                                pageSize: 4,
+                                parameters: {
+                                    songId: songInfo.song_id
+                                }
+                            });
+
+                            //喜欢某首歌曲的用户
+                            $("#user_like_thisSong").jtemplatePag({
+                                template_url: "{$baseUrl}/static/templates/songInfo_userLikeThisSong.html",
+                                data_url: "{$baseUrl}/api/user/findUsersLikeThisSong",
+                                isNeedPage: false,
+                                pageSize: 4,
+                                parameters: {
+                                    songId: songInfo.song_id
+                                }
+                            });
+                        }
+
+
+
+                    </script>
+
+                    <section class="vbox">
+
+                        <section class="scrollable padder-lg w-f-md " id="bjax-target">
+
+                            <div class="row row-sm" >
+
+                                <div class="row m padder-v b-b b-info" >
+                                    <div class="col-md-6 col-lg-6 avatar">
+                                        <a href="#" class="padder avatar col-md-8 col-md-offset-2 icon-spin"  data-toggle="class:icon-spin" id="refresh">
+                                            <img src="{$songInfo.coverUrl}" />
+                                        </a>
+                                        <div class="col-md-2"></div>
+                                        <div class="col-md-12 text-center m-md">
+                                            <button class="btn btn-default">
+                                                <span class="icon icon-heart"></span>
+                                                喜好
+                                            </button>
+                                            <button class="btn btn-default addToSonglist" data-song_id="{$songInfo.id }">
+                                                <span class="fa fa-plus-square"></span>
+                                                收藏
+                                            </button>
+                                            <button class="btn btn-default">
+                                                <span class="icon icon-arrow-down"></span>
+                                                下载
+                                            </button>
+                                            <button class="btn btn-default">
+                                                <span class="icon icon-share-alt"></span>
+                                                分享
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-6" >
+                                        <span class="h3">{$songInfo.name}</span>
+                                        <div class="m-t">
+                                            {if $songInfo.albumName}
+                                                <span class="m-r">专辑: <a href="/album/{$songInfo.albumId}" data-bjax class="text-info">{$songInfo.albumName}</a></span>
+                                            {/if}
+
+                                            {if $songInfo.artists|@count}
+                                                <span class="m-r">歌手:
+                                                    {foreach from=$songInfo.artists item=artist}
+                                                        <a href="{$baseUrl}/artist/{$artist.id}" data-bjax class="text-info m-r-sm">{$artist.name}</a>
+                                                    {/foreach}
+                                                </span>
+                                            {/if}
+                                        </div>
+                                        <div class="scrollable padder-v " style="height: 300px">
+                                            {if $songInfo.pure==1}
+                                                <h3>纯音乐，请欣赏</h3>
+                                            {elseif $songInfo.lyric}
+                                                {$songInfo.lyric}
+                                            {else}
+                                                 <h3>还没有歌词</h3>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row m padder-v">
+                                    <div class="col-md-8">
+                                        <div class="padder-v b-b b-light">
+                                            <span class="h3">听歌评论(<span id="comments_count"></span>)</span>
+                                        </div>
+                                        <div class="bg-light animated fadeInUp">
+                                            <div class="b-a b-light">
+                                                <textarea class="form-control" rows="2" id="textarea_comment_{$songInfo.id}"></textarea>
+                                                <div class="m-t m-xs">
+                                                    <button  data-belong="{$songInfo.id}" data-comment_container="#comment_body" data-type="1" data-tar_input="#textarea_comment_{$songInfo.id}" class="btn btn-xs btn-default pull-right btnSubmitComment">评论</button>
+                                                    <div class="clearfix"></div>
+                                                </div>
+
+                                            </div>
+                                            <div >
+                                                <div id="comment_body" class="my_comment_container"></div>
+                                            </div>
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!--包含这首歌的歌单-->
+                                        <div>
+                                            <div class="padder-v b-b b-light">
+                                                <span class="h4">包含这首歌的歌单</span>
+                                            </div>
+                                            <div class="list-group m-t" id="songlist_include_song">
+                                                <a href="#" class="list-group-item clearfix">
+                                                  <span class="pull-left thumb-sm  m-r">
+                                                    <img src="images/songlist_1.jpg" alt="...">
+                                                  </span>
+                                                  <span class="clear">
+                                                    <span>Lementum ligula vitae</span>
+                                                    <small class="text-muted clear text-ellipsis">播放量: 35万</small>
+                                                  </span>
+                                                </a>
+                                                <a href="#" class="list-group-item clearfix">
+                                                  <span class="pull-left thumb-sm  m-r">
+                                                    <img src="images/songlist_2.jpg" alt="...">
+                                                  </span>
+                                                  <span class="clear">
+                                                    <span>Lementum ligula vitae</span>
+                                                    <small class="text-muted clear text-ellipsis">播放量: 35万</small>
+                                                  </span>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <!--相似歌曲-->
+                                        <div>
+                                            <div class="padder-v b-b b-light">
+                                                <span class="h4">相似歌曲</span>
+                                            </div>
+                                            <div class="list-group m-t" id="similarSong">
+
+                                            </div>
+                                        </div>
+
+                                        <!--喜好这首歌的人-->
+                                        <div>
+                                            <div class="padder-v b-b b-light">
+                                                <span class="h4">喜好这首歌的人</span>
+                                            </div>
+                                            <div class="list-group m-t" id="user_like_thisSong">
+                                                <a href="#" class="list-group-item clearfix">
+                                                  <span class="pull-right clear m-sm">听过119次</span>
+                                                  <span class="pull-left thumb-sm avatar  m-r">
+                                                    <img src="images/user_1.jpg" alt="...">
+                                                  </span>
+                                                  <span class="clear m-sm">
+                                                    <span>tank62</span>
+                                                  </span>
+
+                                                </a>
+                                                <a href="#" class="list-group-item clearfix">
+                                                  <span class="pull-right clear m-sm">听过1119次</span>
+                                                  <span class="pull-left thumb-sm avatar  m-r">
+                                                    <img src="images/user_2.jpg" alt="...">
+                                                  </span>
+                                                  <span class="clear center m-sm">
+                                                    <span>壹个人</span>
+                                                  </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+
+                        </section>
+
+                    </section>
+
+                </section>
+
+                <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen,open"
+                   data-target="#nav,html"></a>
+            </section>
+
+        </section>
+    </section>
+
+
+    <!--下侧播放器 down-->
+    <footer class=" bg-black navbar-fixed-bottom" id="footerPlayer">
+        <div id="jp_container_N">
+            <div class="jp-type-playlist">
+                <div id="jplayer_N" class="jp-jplayer hide"></div>
+                <div class="jp-gui">
+                    <div class="jp-video-play hide">
+                        <a class="jp-video-play-icon">play</a>
+                    </div>
+                    <div class="jp-interface">
+                        <div class="jp-controls">
+                            <div><a class="jp-previous"><i class="icon-control-rewind i-lg"></i></a></div>
+                            <div>
+                                <a class="jp-play"><i class="icon-control-play i-2x"></i></a>
+                                <a class="jp-pause hid"><i class="icon-control-pause i-2x"></i></a>
+                            </div>
+                            <div><a class="jp-next"><i class="icon-control-forward i-lg"></i></a></div>
+                            <div class="hide"><a class="jp-stop"><i class="fa fa-stop"></i></a></div>
+                            <div><a class="" data-toggle="dropdown" data-target="#playlist"><i
+                                    class="icon-list"></i></a></div>
+                            <div class="jp-progress hidden-xs">
+                                <div class="jp-seek-bar dk">
+                                    <div class="jp-play-bar bg-dark">
+                                    </div>
+                                    <div class="jp-title text-lt">
+                                        <ul>
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hidden-xs hidden-sm jp-current-time text-xs text-muted"></div>
+                            <div class="hidden-xs hidden-sm jp-duration text-xs text-muted"></div>
+                            <div class="hidden-xs hidden-sm">
+                                <a class="jp-mute" title="mute"><i class="icon-volume-2"></i></a>
+                                <a class="jp-unmute hid" title="unmute"><i class="icon-volume-off"></i></a>
+                            </div>
+                            <div class="hidden-xs hidden-sm jp-volume">
+                                <div class="jp-volume-bar dk">
+                                    <div class="jp-volume-bar-value lter"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <a class="jp-shuffle" title="shuffle"><i class="icon-shuffle text-muted"></i></a>
+                                <a class="jp-shuffle-off hid" title="shuffle off"><i
+                                        class="icon-shuffle text-lt"></i></a>
+                            </div>
+                            <div>
+                                <a class="jp-repeat" title="repeat"><i class="icon-loop text-muted"></i></a>
+                                <a class="jp-repeat-off hid" title="repeat off"><i class="icon-loop text-lt"></i></a>
+                            </div>
+                            <div class="hide">
+                                <a class="jp-full-screen" title="full screen"><i class="fa fa-expand"></i></a>
+                                <a class="jp-restore-screen" title="restore screen"><i
+                                        class="fa fa-compress text-lt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="jp-playlist dropup" id="playlist">
+                    <ul class="dropdown-menu aside-xl dker">
+                        <!-- The method Playlist.displayPlaylist() uses this unordered list -->
+                        <li class="list-group-item"></li>
+                    </ul>
+                </div>
+                <div class="jp-no-solution hide">
+                    <span>Update Required</span>
+                    To play the media you will need to either update your browser to a recent version or update your <a
+                        href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+                </div>
+            </div>
+        </div>
+    </footer>
+</section>
+<script src="{$baseUrl}/static/scripts/libs/jquery.min.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jquery-jtemplates.js"></script>
+<!-- Bootstrap -->
+<script src="{$baseUrl}/static/scripts/libs/bootstrap.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/slimscroll/jquery.slimscroll.min.js"></script>
+<!--bootstrap-paginator-->
+
+<script src="{$baseUrl}/static/scripts/libs/bootstrap-paginator/bootstrap-paginator.js"></script>
+<!--jplayer-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/jquery.jplayer.min.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/add-on/jplayer.playlist.min.js"></script>
+<!-- datatables -->
+<script src="{$baseUrl}/static/scripts/libs/datatables/jquery.dataTables.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.js"></script>
+<!--notice-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/notice/notie.js"></script>
+<!-- App -->
+<script src="{$baseUrl}/static/scripts/common/app.js"></script>
+<script src="{$baseUrl}/static/scripts/common/app.plugin.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/my_player.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/common/common.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/dao/dao.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/service/server.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/service/user_login_register.js"></script>
+
+<script>
+    init();
+</script>
+
+
+</body>
+</html>

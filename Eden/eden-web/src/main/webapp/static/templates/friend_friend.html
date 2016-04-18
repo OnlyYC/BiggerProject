@@ -1,0 +1,20 @@
+
+{#foreach $T as record}
+<li class="list-group-item">
+    <span class="pull-left thumb-xs m-t-xs avatar m-l-xs m-r-sm">
+        <img src="{$T.record.avatarUrl}" alt="..." class="img-circle">
+        <i class="on b-light right sm"></i>
+    </span>
+    <div class="clear">
+        <div><a href="/userHome/{$T.record.id}" data-bjax>{$T.record.name}</a></div>
+        <small class="text-muted">
+            {#if $T.record.countryText}
+            {$T.record.countryText}
+            {#else}
+            unknown
+            {#/if}
+
+        </small>
+    </div>
+</li>
+{#/for}

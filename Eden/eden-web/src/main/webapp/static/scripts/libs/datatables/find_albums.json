@@ -1,0 +1,17 @@
+{
+  "recordsFiltered":57,
+  "data":[
+    {
+      "id":1,
+      "name":"十一月的肖邦",
+      "cover":"images/album_1.jpg",
+      "artist":"周杰伦"
+    },
+    {
+      "id":2,
+      "name":"星空下的传说",
+      "cover":"images/album_2.jpg",
+      "artist":"周杰伦"
+    }
+  ]
+}

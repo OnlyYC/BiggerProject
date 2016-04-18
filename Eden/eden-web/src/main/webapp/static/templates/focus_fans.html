@@ -1,0 +1,18 @@
+
+{#foreach $T as record}
+<div class=" b-a col-md-6 col-lg-4  padder-v">
+    <span class="thumb-md avatar pull-left">
+        <img src="{$T.record.avatarUrl}">
+    </span>
+    <div class="clear padder ">
+        <button class="btn btn-xs btn-default pull-right">
+            <span class="icon-envelope icon">私信</span>
+        </button>
+        <a href="/userHome/{$T.record.id}" data-bjax class=" clear text-ellipsis h3">{$T.record.name}</a>
+        <span class="text-muted clear text-ellipsis m-t">
+            {$T.record.info}
+        </span>
+
+    </div>
+</div>
+{#/for}

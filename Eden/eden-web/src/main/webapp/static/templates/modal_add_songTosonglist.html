@@ -1,0 +1,32 @@
+<div class="modal-dialog" >
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">收藏到歌单</h4>
+        </div>
+        <div class="modal-body">
+            <div class="list-group" id="songlists">
+                <button  class="list-group-item btn btn-info  btn-block showNewSonglist"  >
+                    <i class="fa fa-plus text"></i>
+                    <span>新建歌单</span>
+                </button>
+                {#foreach $T as record}
+                <a href="javascript:void(0);" class="list-group-item m-t add_song_to_songlist" data-listid="{$T.record.id}" >
+                    <img class="thumb pull-left" src="{$T.record.coverUrl}"/>
+                    <div class="inline m-l-md">
+                        {$T.record.listName}
+                      <span class="text-ellipsis">
+                        [共 {$T.record.songCount} 首歌曲]
+                      </span>
+
+                    </div>
+                    <div class="clearfix"></div>
+                </a>
+                {#/for}
+
+
+
+            </div>
+        </div>
+    </div>
+</div>

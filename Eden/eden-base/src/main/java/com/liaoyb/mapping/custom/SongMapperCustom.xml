@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.SongMapperCustom">
+
+    <!--SongCustom基础resultMap-->
+    <resultMap id="SongCustom_ResultMap" type="SongCustom">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="albumId" property="albumId" jdbcType="BIGINT" />
+        <result column="albumName" property="albumName" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="BIGINT" />
+        <result column="collectCount" property="collectCount" jdbcType="BIGINT" />
+        <result column="coverUrl" property="coverUrl" jdbcType="VARCHAR" />
+        <result column="downloadCount" property="downloadCount" jdbcType="BIGINT" />
+        <result column="flag" property="flag" jdbcType="BIGINT" />
+        <result column="info" property="info" jdbcType="VARCHAR" />
+        <result column="lyric" property="lyric" jdbcType="VARCHAR" />
+        <result column="mvId" property="mvId" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="playCount" property="playCount" jdbcType="BIGINT" />
+        <result column="pure" property="pure" jdbcType="BIGINT" />
+        <result column="releaseTime" property="releaseTime" jdbcType="BIGINT" />
+        <result column="songFileKey" property="songFileKey" jdbcType="BIGINT" />
+        <result column="songUrl" property="songUrl" jdbcType="VARCHAR" />
+        <result column="time" property="time" jdbcType="BIGINT" />
+        <result column="type" property="type" jdbcType="BIGINT" />
+        <result column="userId" property="userId" jdbcType="BIGINT" />
+
+        <collection property="artists" ofType="Artist" column="id"  select="com.liaoyb.persistence.dao.custom.ArtistMapperCustom.findArtistsBySongId"/>
+    </resultMap>
+
+    <!--SongDto的resultMap-->
+    <resultMap id="SongDto_ResultMap" type="com.liaoyb.persistence.domain.dto.SongDto">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="albumId" property="albumId" jdbcType="BIGINT" />
+        <result column="albumName" property="albumName" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="BIGINT" />
+        <result column="collectCount" property="collectCount" jdbcType="BIGINT" />
+        <result column="coverUrl" property="coverUrl" jdbcType="VARCHAR" />
+        <result column="downloadCount" property="downloadCount" jdbcType="BIGINT" />
+        <result column="flag" property="flag" jdbcType="BIGINT" />
+        <result column="info" property="info" jdbcType="VARCHAR" />
+        <result column="lyric" property="lyric" jdbcType="VARCHAR" />
+        <result column="mvId" property="mvId" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="playCount" property="playCount" jdbcType="BIGINT" />
+        <result column="pure" property="pure" jdbcType="BIGINT" />
+        <result column="releaseTime" property="releaseTime" jdbcType="BIGINT" />
+        <result column="songFileKey" property="songFileKey" jdbcType="BIGINT" />
+        <result column="songUrl" property="songUrl" jdbcType="VARCHAR" />
+        <result column="time" property="time" jdbcType="BIGINT" />
+        <result column="type" property="type" jdbcType="BIGINT" />
+        <result column="userId" property="userId" jdbcType="BIGINT" />
+        <result column="like" property="like"/>
+
+        <collection property="artists" ofType="Artist" column="id"  select="com.liaoyb.persistence.dao.custom.ArtistMapperCustom.findArtistsBySongId"/>
+    </resultMap>
+
+    <!--SongCustom Base Sql-->
+    <sql id="songCustom_Base_Sql">
+        select  s.* from song s
+    </sql>
+
+    <!--SongDto Base Sql-->
+    <sql id="songDto_Base_Sql">
+        select s.*,
+        <choose>
+            <when test="userId==null">
+                FALSE
+            </when>
+            <otherwise>
+                IF((select sl.id from songlist sl,songlist_with_song sl_w_s where sl.listName='我喜欢' and sl.id=sl_w_s.songlistId and sl.userId=#{userId} and sl_w_s.songId=s.id LIMIT 0,1)is NULL ,FALSE ,TRUE )
+            </otherwise>
+        </choose>
+        as `like` from song s
+    </sql>
+
+    <!--对歌曲收藏量加1-->
+    <update id="addOneSongCollectCount">
+        UPDATE song set collectCount=collectCount+1 where id=#{songId}
+    </update>
+
+
+    <!--根据Id查找音乐-->
+    <select id="findSongCustomById" resultMap="SongCustom_ResultMap" parameterType="long">
+        <include refid="songCustom_Base_Sql"/>
+        where s.id=#{songId}
+    </select>
+
+    <!--专辑中的音乐-->
+    <select id="findSongCustomsInAlbum" resultMap="SongCustom_ResultMap" parameterType="long">
+        <include refid="songCustom_Base_Sql"/>
+        where s.albumId=#{albumId}
+    </select>
+
+
+    <!--歌单中的音乐-->
+    <select id="findSongCustomsInSonglist" resultMap="SongCustom_ResultMap" parameterType="long">
+        <include refid="songCustom_Base_Sql"/>
+         where s.id in(select songId from songlist_with_song where songlistId=#{songlistId})
+    </select>
+
+    <!--艺术家的所有音乐-->
+    <select id="findSongCustomsBelongToArtist" resultMap="SongCustom_ResultMap" parameterType="long">
+        <include refid="songCustom_Base_Sql"/>
+        where s.id in(select songId from song_with_artist where artistId=#{artistId})
+    </select>
+
+
+
+    <!--歌曲播放量排名。type区分mv和歌曲-->
+    <select id="findSongsRankByPlayCount" resultMap="SongCustom_ResultMap" >
+        <include refid="songCustom_Base_Sql"/>
+        <where>
+            <if test="type!=null">
+                and s.type=#{type}
+            </if>
+            <if test="area!=null and area!=0">
+                and s.area=#{area}
+            </if>
+            and s.flag=1
+        </where>
+         order by s.playCount desc
+    </select>
+
+    <!--最新的歌曲,根据发布时间排序。type区分mv和歌曲,area表示地区-->
+    <select id="findlastSongs" resultMap="SongCustom_ResultMap" >
+        <include refid="songCustom_Base_Sql"/>
+        <where>
+            <if test="type!=null">
+                and s.type=#{type}
+            </if>
+            <if test="area!=null and area!=0">
+                and s.area=#{area}
+            </if>
+            and s.flag=1
+        </where>
+         order by s.releaseTime desc
+    </select>
+
+    <!--歌曲搜索'%${condition.name}%'，CONCAT(CONCAT('%',#{condition.name}),'%') 可以防止sql注入-->
+    <select id="findSongCustomsQuery" resultMap="SongCustom_ResultMap" parameterType="Song">
+        <include refid="songCustom_Base_Sql"/>
+        <if test="condition!=null">
+            <where>
+                <if test="condition.type!=null">
+                    and s.type=#{condition.type}
+                </if>
+                <if test="condition.name!=null">
+                    and s.name like CONCAT(CONCAT('%',#{condition.name}),'%') 
+                </if>
+                and s.flag=1
+            </where>
+        </if>
+    </select>
+
+    <!--歌曲推荐(整体推荐,根据播放量，用户收藏来决定),type区分mv和歌曲-->
+    <select id="findSongCustomsRecommend" resultMap="SongCustom_ResultMap" parameterType="long">
+        <include refid="songCustom_Base_Sql"/>
+        <where>
+            <if test="type!=null">
+                and s.type=#{type}
+            </if>
+            and s.flag=1
+        </where>
+        order by (s.playCount*0.2+s.downloadCount*0.3+s.collectCount*0.5) DESC
+    </select>
+
+
+    <!--歌曲推荐(根据用户的喜好来推荐),type区分mv和歌曲,如果是mv的话，不能是用户收藏的-->
+    <select id="findSongCustomsUserLike" resultMap="SongCustom_ResultMap">
+        <include refid="songCustom_Base_Sql"/>
+        <where>
+            <if test="type!=null">
+                and s.type=#{type}
+            </if>
+            <if test="type==2">
+                and s.id not in(select targetId from collect where userId=#{userId} and collectType=4)
+            </if>
+            and s.flag=1
+
+        </where>
+         order by(select sum( ifnull((select s_l.ratio from song_with_tag s_l where s_l.songId=s.id and s_l.tagId=ta.id),0)*ifnull((select u_p.factor from user_prefer u_p where u_p.userId=#{userId}  and u_p.tagId=ta.id),0)) from tag ta) desc
+    </select>
+
+    <!--相似歌曲推荐(相似算法),还不能是当前歌曲,要与当前歌曲的type一致-->
+    <select id="findSongCustomsSimilar" resultMap="SongCustom_ResultMap">
+        <include refid="songCustom_Base_Sql"/>
+        <where>
+            and s.flag=1
+            and s.type=(select type from song where id=#{songId})
+            and s.id!=#{songId}
+        </where>
+         order by (select sum(pow((ifnull((select s_l.ratio from song_with_tag s_l where s_l.songId=#{songId} and s_l.tagId=ta.id),0)-ifnull((select s_l.ratio from song_with_tag s_l where s_l.songId=s.id and s_l.tagId=ta.id),0)),2)) from tag ta)  desc
+    </select>
+
+    <!--随机推荐,type区分mv和歌曲-->
+    <select id="findSongCustomsRandom" resultMap="SongCustom_ResultMap" >
+        <include refid="songCustom_Base_Sql"/>
+        <where>
+            <if test="type!=null">
+                and s.type=#{type}
+            </if>
+            and s.flag=1
+        </where>
+
+         order by rand()
+    </select>
+
+    <!--SongDto-->
+    <select id="findSongDtoById" resultMap="SongDto_ResultMap">
+        <include refid="songDto_Base_Sql"/>
+        <where>
+            s.id=#{songId}
+        </where>
+    </select>
+
+    <!--歌单中的音乐SnogDto-->
+    <select id="findSongDtoInSonglist" resultMap="SongDto_ResultMap">
+        <include refid="songDto_Base_Sql"/>
+        where s.id in(select songId from songlist_with_song where songlistId=#{songlistId})
+    </select>
+
+    <!--专辑中的音乐SongDto-->
+    <select id="findSongDtoInAlbum" resultMap="SongDto_ResultMap">
+        <include refid="songDto_Base_Sql"/>
+        where s.albumId=#{albumId}
+    </select>
+
+    <!--歌曲综合排名-->
+    <select id="findSonsComprehensive" resultMap="SongCustom_ResultMap">
+        <include refid="songCustom_Base_Sql"/>
+        <where>
+            <if test="type!=null">
+                and s.type=#{type}
+            </if>
+            <if test="area!=null and area!=0">
+                and s.area=#{area}
+            </if>
+            and s.flag=1
+        </where>
+        order by (s.playCount*0.2+s.downloadCount*0.3+s.collectCount*0.5) DESC
+    </select>
+
+
+    <!--搜索歌曲,区分歌曲、mv-->
+    <select id="findSong" resultMap="SongCustom_ResultMap">
+        <include refid="songCustom_Base_Sql"/>
+        <where>
+            AND s.flag=1
+            <if test="type!=null">
+                AND s.type=#{type}
+            </if>
+
+            AND(s.name LIKE CONCAT(CONCAT('%',#{searchText}),'%')
+            OR s.albumName LIKE CONCAT(CONCAT('%',#{searchText}),'%')
+            OR s.info LIKE CONCAT(CONCAT('%',#{searchText}),'%')
+            )
+        </where>
+    </select>
+
+    <!--随机-->
+    <select id="findSongDtoRandom" resultMap="SongDto_ResultMap">
+        <include refid="songDto_Base_Sql"/>
+        <where>
+            <if test="type!=null">
+                and s.type=#{type}
+            </if>
+            and s.flag=1
+        </where>
+
+        order by rand()
+    </select>
+
+
+</mapper>

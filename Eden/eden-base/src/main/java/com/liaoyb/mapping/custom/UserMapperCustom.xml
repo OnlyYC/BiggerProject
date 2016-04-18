@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.UserMapperCustom">
+
+    <resultMap id="UserDto_baseMap" type="com.liaoyb.persistence.domain.dto.UserDto">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="avatarUrl" property="avatarUrl" jdbcType="VARCHAR" />
+        <result column="country" property="country" jdbcType="BIGINT" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="info" property="info" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="qq" property="qq" jdbcType="VARCHAR" />
+        <result column="registerTime" property="registerTime" jdbcType="BIGINT" />
+        <result column="sex" property="sex" jdbcType="BIGINT" />
+        <result column="tel" property="tel" jdbcType="VARCHAR" />
+        <result column="registerCode" property="registerCode" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="BIGINT" />
+
+
+        <collection property="roleType" column="roleType" ofType="long">
+            <id column="roleId"/>
+        </collection>
+
+
+
+    </resultMap>
+
+    <!--账号激活-->
+    <update id="activateAccount">
+        update user u set u.state=1 where u.id=(select a.id from (select ui.id  from user ui where ui.email=#{email} and ui.registerCode=#{registerCode} and ui.state=0 and ui.valid=1  limit 0,1)a)
+    </update>
+
+    <!--清理邮箱之前的未激活的注册信息-->
+    <update id="cleanOutOfDateRegistration">
+        update user u set u.valid=0 where u.email=#{email} and u.state=0
+    </update>
+
+
+    <!--用户听歌排行,type区分mv和歌曲-->
+    <select id="findUserListenTop" resultType="Userlisten">
+        select * from userlisten user_listen
+        <where>
+            and user_listen.userId=#{userId}
+            <if test="type!=null">
+                and user_listen.songId in(select s.id from song s where s.type=#{type} )
+            </if>
+        </where>
+        order by user_listen.playCount desc
+
+    </select>
+
+    <!--用户登录-->
+    <select id="userLogin" resultMap="UserDto_baseMap">
+        select u.*,r.roleType as roleType,r.id roleId from user u left join user_with_role u_w_r on u.id=u_w_r.userId left join role r on u_w_r.roleId=r.id
+        <where>
+
+            and u.email=#{user.email}
+            and u.password=#{user.password}
+            and u.state=1
+            and u.valid=1
+        </where>
+        limit 0,1
+
+    </select>
+
+    <!--用户的播放列表-->
+    <select id="findSongCustomsInPlaylist" resultMap="com.liaoyb.persistence.dao.custom.SongMapperCustom.SongCustom_ResultMap">
+      <include refid="com.liaoyb.persistence.dao.custom.SongMapperCustom.songCustom_Base_Sql"/>
+        where s.id in(select ul.songId form userlisten ul where ul.flag=1)
+    </select>
+
+    <!--用户的创建歌单,flag表示有效-->
+    <select id="findSonglistsUserCreated" resultType="com.liaoyb.persistence.domain.dto.SonglistCountDto">
+        select sl.*,count(s_w_s.songId) songCount from songlist sl LEFT JOIN songlist_with_song s_w_s on sl.id=s_w_s.songlistId where sl.userId=#{userId} and sl.flag=1
+        group by sl.id
+    </select>
+
+    <!--用户的收藏歌单-->
+    <select id="findSonglistUserCollected" resultType="com.liaoyb.persistence.domain.dto.SonglistCountDto">
+        select sl.*,count(s_w_s.songId) songCount from songlist sl JOIN collect co on (sl.id=co.targetId and  co.userId=#{userId} and co.collectType=1  )
+        LEFT JOIN songlist_with_song s_w_s on sl.id=s_w_s.songlistId
+        group by sl.id
+    </select>
+
+
+    <!--喜欢这首歌曲的人，用户,就是播放了,这首歌曲的用户,按照播放次数排序-->
+    <select id="findUsersLikeThisSong" resultType="com.liaoyb.persistence.domain.dto.UserPlay">
+        select u.*,IFNULL(ul.playCount,0) playCount from user u left JOIN userlisten ul on u.id=ul.userId where ul.songId=#{songId} order by ul.playCount desc
+    </select>
+
+
+
+    <!--用户收藏的mv-->
+    <select id="findUserMV" resultMap="com.liaoyb.persistence.dao.custom.SongMapperCustom.SongCustom_ResultMap">
+        <include refid="com.liaoyb.persistence.dao.custom.SongMapperCustom.songCustom_Base_Sql"/>
+        where s.id in(select targetId from collect where userId=#{userId} and collectType=4)
+    </select>
+
+
+    <!--用户收藏的歌手dto-->
+    <select id="findUserArtist" resultType="com.liaoyb.persistence.domain.dto.ArtistDto">
+
+        <include refid="com.liaoyb.persistence.dao.custom.ArtistMapperCustom.ArtistDto_Sql"/>
+        where a.id in(select targetId from collect where userId=#{userId} and collectType=3)
+    </select>
+
+    <!--用户是否可用-->
+    <select id="userAvailable" resultType="com.liaoyb.persistence.domain.vo.base.User">
+        select * from user u
+        <where>
+            and u.email=#{user.email}
+            and u.state=1
+            and u.valid=1
+        </where>
+    </select>
+
+
+    <!--用户详细信息-->
+    <select id="findUserInfo" resultType="com.liaoyb.persistence.domain.dto.UserInfo">
+       SELECT
+      ui.*,
+      z.text        countryText,
+      (select count(indy.id) from dynamic indy where indy.userId=ui.id) dynamicCount,
+      (select count(inco.id) from collect inco where inco.userId=ui.id and inco.collectType=5)focusCount,
+      (select count(inco.id) from collect inco where inco.targetId=ui.id and inco.collectType=5)fansCount
+        FROM (SELECT u.*
+              FROM user u
+              WHERE u.id = #{userId}) ui LEFT JOIN zd z ON (z.code = ui.country AND z.type = 'country')
+    </select>
+
+    <!--用户关注的用户-->
+    <select id="findUserFocus" resultType="com.liaoyb.persistence.domain.vo.base.User">
+        select u.* from user u,collect col where u.id=col.targetId and col.userId=#{userId} and col.collectType=5
+    </select>
+
+    <!--用户的粉丝-->
+    <select id="findUserFans" resultType="com.liaoyb.persistence.domain.vo.base.User">
+         select u.* from user u,collect col where u.id=col.userId and col.targetId=#{userId} and col.collectType=5
+    </select>
+
+
+    <!--用户上传的(音乐，mv)-->
+    <select id="findUserUpload" resultMap="com.liaoyb.persistence.dao.custom.SongMapperCustom.SongDto_ResultMap">
+        <include refid="com.liaoyb.persistence.dao.custom.SongMapperCustom.songDto_Base_Sql"/>
+        where s.userId=#{userId} and s.flag=1
+    </select>
+
+    <!--用户好友-->
+    <select id="findUserFriend" resultType="com.liaoyb.persistence.domain.dto.UserFriend">
+        select ui.*,z.text    countryText
+        FROM (
+          SELECT u.* from user u
+          JOIN collect col on (u.id=col.targetId and col.userId=#{userId} and col.collectType=5)
+        )ui
+         LEFT JOIN zd z ON (z.code = ui.country AND z.type = 'country')
+         <where>
+             <if test="condition.name!=null">
+                 ui.name like CONCAT(CONCAT('%',#{condition.name}),'%')
+             </if>
+         </where>
+
+
+    </select>
+
+
+    <!--搜索用户-->
+    <select id="findUser" resultType="com.liaoyb.persistence.domain.vo.base.User">
+        SELECT u.* from user u
+        WHERE  u.state=1
+         AND u.userType=1
+         AND u.name like CONCAT(CONCAT('%',#{searchText}),'%')
+    </select>
+
+
+</mapper>

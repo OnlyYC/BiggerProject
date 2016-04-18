@@ -1,0 +1,22 @@
+
+{#foreach $T as record}
+<a href="/song/{$T.record.song_id}" data-bjax class="list-group-item clearfix">
+  <span class="pull-left thumb-lg  m-r">
+    <img src="{$T.record.poster}" alt="...">
+  </span>
+  <span class="clear">
+    <span class="text-ellipsis">{$T.record.title}</span>
+    <small class="text-muted clear text-ellipsis">
+        {#foreach $T.record.artists as artist}
+        {#if $T.artist$index>0}
+        &&{$T.artist.name}
+        {#else}
+        {$T.artist.name}
+        {#/if}
+        {#/for}
+    </small>
+    </small>
+  </span>
+</a>
+
+{#/for}

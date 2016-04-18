@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.MessMapperCustom">
+
+    <!--置消息为已读-->
+    <update id="updateMessRead">
+        UPDATE mess SET looked=1 WHERE toUser=#{userId}
+        AND id in
+        <foreach item="item" index="index" collection="messId" open="(" separator="," close=")">
+        #{item}
+        </foreach>
+    </update>
+
+
+    <!--用户的所有信息-->
+    <select id="findUserAllMess" resultType="com.liaoyb.persistence.domain.vo.base.Mess">
+        SELECT * FROM mess where toUser=#{userId}
+    </select>
+
+    <!--用户还未查看的信息-->
+    <select id="findUserMessNotLook" resultType="com.liaoyb.persistence.domain.vo.base.Mess">
+        SELECT * FROM mess me where me.toUser=#{userId} AND me.looked=0 ORDER BY me.date DESC
+    </select>
+
+    <!--用户最新消息-->
+    <select id="findUserLastMess" resultType="com.liaoyb.persistence.domain.vo.base.Mess">
+        SELECT * FROM mess me where me.toUser=#{userId} AND me.looked=0
+        <if test="lastTime!=null">
+        AND me.date>#{lastTime}
+        </if>
+        ORDER BY me.date DESC
+    </select>
+
+    <!--用户之前未读的信息-->
+    <select id="findUserPreviousMess" resultType="com.liaoyb.persistence.domain.vo.base.Mess">
+        SELECT * FROM mess me where me.toUser=#{userId} AND me.looked=0
+        <if test="previousTime!=null">
+            AND me.date<![CDATA[<#{previousTime}]]>
+        </if>
+        ORDER BY me.date DESC
+    </select>
+</mapper>

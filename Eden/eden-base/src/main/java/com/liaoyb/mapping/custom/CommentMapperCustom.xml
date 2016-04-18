@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.CommentMapperCustom">
+    <resultMap id="CommentCustom_ResultMap" type="CommentCustom">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="addDate" property="addDate" jdbcType="BIGINT" />
+        <result column="belong" property="belong" jdbcType="BIGINT" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="fatherCommentId" property="fatherCommentId" jdbcType="BIGINT" />
+        <result column="praiseCount" property="praiseCount" jdbcType="BIGINT" />
+        <result column="type" property="type" jdbcType="BIGINT" />
+        <result column="userAvatarUrl" property="userAvatarUrl" jdbcType="VARCHAR" />
+        <result column="userId" property="userId" jdbcType="BIGINT" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="childCommentCount" property="childCommentCount" />
+
+        <collection property="childComments" ofType="Comment" column="id" select="findChildComments"/>
+
+
+    </resultMap>
+
+    <!--赞评论-->
+    <update id="praiseComment">
+        UPDATE comment set praiseCount=praiseCount+1 WHERE id=#{commentId}
+    </update>
+
+    <!--子评论-->
+    <select id="findChildComments" resultType="com.liaoyb.persistence.domain.vo.base.Comment">
+        select * from comment where fatherCommentId=#{fatherCommentId}
+    </select>
+
+
+    <!--查找评论扩展,根据所属id和类型,默认按照时间排序-->
+    <select id="findCommentCustoms" resultMap="CommentCustom_ResultMap">
+        select com_par.*,(select count(1) from comment where fatherCommentId=com_par.id)childCommentCount from comment com_par where com_par.belong=#{belongId} and com_par.type=#{type}
+        order by com_par.addDate desc
+    </select>
+
+
+    <!--最热门评论,根据所属id和类型,按照赞的数量排序-->
+    <select id="findCommentCustomsHot" resultMap="CommentCustom_ResultMap">
+        select com_par.*,com_ch.id child_id,com_ch.addDate child_addDate,com_ch.belong child_belong,com_ch.content child_content,com_ch.fatherCommentId child_fatherCommentId,com_ch.praiseCount child_praiseCount,com_ch.type child_type,com_ch.userAvatarUrl child_userAvatarUrl,com_ch.username child_username,com_ch.userId child_userId
+        from comment com_par left join comment com_ch on com_par.id=com_ch.fatherCommentId
+        where com_par.belong=#{belongId} and com_par.type=#{type}
+        order by com_par.praiseCount desc
+    </select>
+
+</mapper>

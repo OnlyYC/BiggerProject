@@ -1,0 +1,50 @@
+{#foreach $T as record}
+<div class="col-xs-6 col-sm-3 col-md-3 col-lg-2">
+    <div class="item">
+        <div class="pos-rlt">
+            <div class="bottom">
+                <!-- 歌曲时间 -->
+                <span class="badge bg-info m-l-sm m-b-sm">{fmtSongTime($T.record.time)}</span>
+            </div>
+            <div class="item-overlay opacity r r-2x bg-black">
+                <div class="center text-center m-t-n">
+                    <a href="javascript:void(0);" data-toggle="class" class="jp-play-discover" data-song_id="{$T.record.song_id}">
+                        <i class="icon-control-play i-2x text"></i>
+                        <i class="icon-control-pause i-2x text-active"></i>
+                    </a>
+                </div>
+                <div class="bottom padder m-b-sm" >
+                    <!-- 喜欢，添加到喜欢列表 -->
+                    <a href="javascript:void(0);" data-song_id="{$T.record.song_id }" class="pull-right toggleFromMyLovelist" data-toggle="toggle">
+                        {#if $T.record.like}
+                        <i class="fa fa-heart-o  text-active"></i>
+                        <i class="fa fa-heart text text-danger"></i>
+                        {#else}
+                        <i class="fa fa-heart-o text"></i>
+                        <i class="fa fa-heart text-active text-danger"></i>
+                        {#/if}
+
+                    </a>
+                    <!-- 收藏 -->
+                    <a href="javascript:void(0);" data-song_id="{$T.record.song_id }"  class="addToSonglist">
+                        <i class="fa fa-plus-circle text"></i>
+                    </a>
+                </div>
+            </div>
+            <a href="javascript:void(0);"><img src="{$T.record.poster}" alt="" class="r r-2x img-full"></a>
+        </div>
+        <div class="padder-v">
+            <a href="/song/{$T.record.song_id}" data-bjax class="text-ellipsis">{$T.record.title }</a>
+            <span  class="text-ellipsis text-xs text-muted">
+                {#foreach $T.record.artists as artist}
+                    <a href="/artist/{$T.artist.id}" data-bjax class="m-r-sm">{$T.artist.name}</a>
+                {#/for}
+                {#if $T.record.artists.length==0}
+                    <span  class="m-r-sm">..</span>
+                {#/if}
+            </span>
+        </div>
+    </div>
+</div>
+
+{#/for}

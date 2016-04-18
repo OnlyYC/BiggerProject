@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.base.SonglistMapper" >
+  <resultMap id="BaseResultMap" type="com.liaoyb.persistence.domain.vo.base.Songlist" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="collectCount" property="collectCount" jdbcType="BIGINT" />
+    <result column="coverUrl" property="coverUrl" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="BIGINT" />
+    <result column="flag" property="flag" jdbcType="BIGINT" />
+    <result column="info" property="info" jdbcType="VARCHAR" />
+    <result column="lastUpdate" property="lastUpdate" jdbcType="BIGINT" />
+    <result column="listName" property="listName" jdbcType="VARCHAR" />
+    <result column="playCount" property="playCount" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="BIGINT" />
+    <result column="userId" property="userId" jdbcType="BIGINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, collectCount, coverUrl, createTime, flag, info, lastUpdate, listName, playCount, 
+    type, userId, username
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from songlist
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from songlist
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from songlist
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistExample" >
+    delete from songlist
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.liaoyb.persistence.domain.vo.base.Songlist" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into songlist (collectCount, coverUrl, createTime, 
+      flag, info, lastUpdate, 
+      listName, playCount, type, 
+      userId, username)
+    values (#{collectCount,jdbcType=BIGINT}, #{coverUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
+      #{flag,jdbcType=BIGINT}, #{info,jdbcType=VARCHAR}, #{lastUpdate,jdbcType=BIGINT}, 
+      #{listName,jdbcType=VARCHAR}, #{playCount,jdbcType=BIGINT}, #{type,jdbcType=BIGINT}, 
+      #{userId,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.liaoyb.persistence.domain.vo.base.Songlist" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into songlist
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="collectCount != null" >
+        collectCount,
+      </if>
+      <if test="coverUrl != null" >
+        coverUrl,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="info != null" >
+        info,
+      </if>
+      <if test="lastUpdate != null" >
+        lastUpdate,
+      </if>
+      <if test="listName != null" >
+        listName,
+      </if>
+      <if test="playCount != null" >
+        playCount,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="collectCount != null" >
+        #{collectCount,jdbcType=BIGINT},
+      </if>
+      <if test="coverUrl != null" >
+        #{coverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=BIGINT},
+      </if>
+      <if test="info != null" >
+        #{info,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdate != null" >
+        #{lastUpdate,jdbcType=BIGINT},
+      </if>
+      <if test="listName != null" >
+        #{listName,jdbcType=VARCHAR},
+      </if>
+      <if test="playCount != null" >
+        #{playCount,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.liaoyb.persistence.domain.vo.base.SonglistExample" resultType="java.lang.Integer" >
+    select count(*) from songlist
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update songlist
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.collectCount != null" >
+        collectCount = #{record.collectCount,jdbcType=BIGINT},
+      </if>
+      <if test="record.coverUrl != null" >
+        coverUrl = #{record.coverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.flag != null" >
+        flag = #{record.flag,jdbcType=BIGINT},
+      </if>
+      <if test="record.info != null" >
+        info = #{record.info,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastUpdate != null" >
+        lastUpdate = #{record.lastUpdate,jdbcType=BIGINT},
+      </if>
+      <if test="record.listName != null" >
+        listName = #{record.listName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.playCount != null" >
+        playCount = #{record.playCount,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=BIGINT},
+      </if>
+      <if test="record.userId != null" >
+        userId = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.username != null" >
+        username = #{record.username,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update songlist
+    set id = #{record.id,jdbcType=BIGINT},
+      collectCount = #{record.collectCount,jdbcType=BIGINT},
+      coverUrl = #{record.coverUrl,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=BIGINT},
+      flag = #{record.flag,jdbcType=BIGINT},
+      info = #{record.info,jdbcType=VARCHAR},
+      lastUpdate = #{record.lastUpdate,jdbcType=BIGINT},
+      listName = #{record.listName,jdbcType=VARCHAR},
+      playCount = #{record.playCount,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=BIGINT},
+      userId = #{record.userId,jdbcType=BIGINT},
+      username = #{record.username,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liaoyb.persistence.domain.vo.base.Songlist" >
+    update songlist
+    <set >
+      <if test="collectCount != null" >
+        collectCount = #{collectCount,jdbcType=BIGINT},
+      </if>
+      <if test="coverUrl != null" >
+        coverUrl = #{coverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=BIGINT},
+      </if>
+      <if test="info != null" >
+        info = #{info,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdate != null" >
+        lastUpdate = #{lastUpdate,jdbcType=BIGINT},
+      </if>
+      <if test="listName != null" >
+        listName = #{listName,jdbcType=VARCHAR},
+      </if>
+      <if test="playCount != null" >
+        playCount = #{playCount,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liaoyb.persistence.domain.vo.base.Songlist" >
+    update songlist
+    set collectCount = #{collectCount,jdbcType=BIGINT},
+      coverUrl = #{coverUrl,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=BIGINT},
+      flag = #{flag,jdbcType=BIGINT},
+      info = #{info,jdbcType=VARCHAR},
+      lastUpdate = #{lastUpdate,jdbcType=BIGINT},
+      listName = #{listName,jdbcType=VARCHAR},
+      playCount = #{playCount,jdbcType=BIGINT},
+      type = #{type,jdbcType=BIGINT},
+      userId = #{userId,jdbcType=BIGINT},
+      username = #{username,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

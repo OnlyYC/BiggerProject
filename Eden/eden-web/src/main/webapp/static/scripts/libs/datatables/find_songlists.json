@@ -1,0 +1,19 @@
+{
+  "recordsFiltered":57,
+  "data":[
+    {
+      "id":1,
+      "name":"美国Billboard周榜",
+      "cover":"images/songlist_1.jpg",
+      "count":21,
+      "user":"Billboard公告牌"
+    },
+    {
+      "id":2,
+      "name":"UK排行榜周榜",
+      "cover":"images/songlist_2.jpg",
+      "count":10,
+      "user":"shooting丶star"
+    }
+  ]
+}

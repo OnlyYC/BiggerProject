@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.base.SongMapper" >
+  <resultMap id="BaseResultMap" type="com.liaoyb.persistence.domain.vo.base.Song" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="albumId" property="albumId" jdbcType="BIGINT" />
+    <result column="albumName" property="albumName" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="BIGINT" />
+    <result column="collectCount" property="collectCount" jdbcType="BIGINT" />
+    <result column="coverUrl" property="coverUrl" jdbcType="VARCHAR" />
+    <result column="downloadCount" property="downloadCount" jdbcType="BIGINT" />
+    <result column="flag" property="flag" jdbcType="BIGINT" />
+    <result column="info" property="info" jdbcType="VARCHAR" />
+    <result column="lyric" property="lyric" jdbcType="VARCHAR" />
+    <result column="mvId" property="mvId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="playCount" property="playCount" jdbcType="BIGINT" />
+    <result column="pure" property="pure" jdbcType="BIGINT" />
+    <result column="releaseTime" property="releaseTime" jdbcType="BIGINT" />
+    <result column="songFileKey" property="songFileKey" jdbcType="VARCHAR" />
+    <result column="songUrl" property="songUrl" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="BIGINT" />
+    <result column="userId" property="userId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, albumId, albumName, area, collectCount, coverUrl, downloadCount, flag, info, 
+    lyric, mvId, name, playCount, pure, releaseTime, songFileKey, songUrl, time, type, 
+    userId
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.liaoyb.persistence.domain.vo.base.SongExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from song
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from song
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from song
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.liaoyb.persistence.domain.vo.base.SongExample" >
+    delete from song
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.liaoyb.persistence.domain.vo.base.Song" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into song (albumId, albumName, area, 
+      collectCount, coverUrl, downloadCount, 
+      flag, info, lyric, mvId, 
+      name, playCount, pure, 
+      releaseTime, songFileKey, songUrl, 
+      time, type, userId)
+    values (#{albumId,jdbcType=BIGINT}, #{albumName,jdbcType=VARCHAR}, #{area,jdbcType=BIGINT}, 
+      #{collectCount,jdbcType=BIGINT}, #{coverUrl,jdbcType=VARCHAR}, #{downloadCount,jdbcType=BIGINT}, 
+      #{flag,jdbcType=BIGINT}, #{info,jdbcType=VARCHAR}, #{lyric,jdbcType=VARCHAR}, #{mvId,jdbcType=BIGINT}, 
+      #{name,jdbcType=VARCHAR}, #{playCount,jdbcType=BIGINT}, #{pure,jdbcType=BIGINT}, 
+      #{releaseTime,jdbcType=BIGINT}, #{songFileKey,jdbcType=VARCHAR}, #{songUrl,jdbcType=VARCHAR}, 
+      #{time,jdbcType=BIGINT}, #{type,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.liaoyb.persistence.domain.vo.base.Song" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into song
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="albumId != null" >
+        albumId,
+      </if>
+      <if test="albumName != null" >
+        albumName,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="collectCount != null" >
+        collectCount,
+      </if>
+      <if test="coverUrl != null" >
+        coverUrl,
+      </if>
+      <if test="downloadCount != null" >
+        downloadCount,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="info != null" >
+        info,
+      </if>
+      <if test="lyric != null" >
+        lyric,
+      </if>
+      <if test="mvId != null" >
+        mvId,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="playCount != null" >
+        playCount,
+      </if>
+      <if test="pure != null" >
+        pure,
+      </if>
+      <if test="releaseTime != null" >
+        releaseTime,
+      </if>
+      <if test="songFileKey != null" >
+        songFileKey,
+      </if>
+      <if test="songUrl != null" >
+        songUrl,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="userId != null" >
+        userId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="albumId != null" >
+        #{albumId,jdbcType=BIGINT},
+      </if>
+      <if test="albumName != null" >
+        #{albumName,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=BIGINT},
+      </if>
+      <if test="collectCount != null" >
+        #{collectCount,jdbcType=BIGINT},
+      </if>
+      <if test="coverUrl != null" >
+        #{coverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadCount != null" >
+        #{downloadCount,jdbcType=BIGINT},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=BIGINT},
+      </if>
+      <if test="info != null" >
+        #{info,jdbcType=VARCHAR},
+      </if>
+      <if test="lyric != null" >
+        #{lyric,jdbcType=VARCHAR},
+      </if>
+      <if test="mvId != null" >
+        #{mvId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="playCount != null" >
+        #{playCount,jdbcType=BIGINT},
+      </if>
+      <if test="pure != null" >
+        #{pure,jdbcType=BIGINT},
+      </if>
+      <if test="releaseTime != null" >
+        #{releaseTime,jdbcType=BIGINT},
+      </if>
+      <if test="songFileKey != null" >
+        #{songFileKey,jdbcType=VARCHAR},
+      </if>
+      <if test="songUrl != null" >
+        #{songUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.liaoyb.persistence.domain.vo.base.SongExample" resultType="java.lang.Integer" >
+    select count(*) from song
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update song
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.albumId != null" >
+        albumId = #{record.albumId,jdbcType=BIGINT},
+      </if>
+      <if test="record.albumName != null" >
+        albumName = #{record.albumName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.area != null" >
+        area = #{record.area,jdbcType=BIGINT},
+      </if>
+      <if test="record.collectCount != null" >
+        collectCount = #{record.collectCount,jdbcType=BIGINT},
+      </if>
+      <if test="record.coverUrl != null" >
+        coverUrl = #{record.coverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.downloadCount != null" >
+        downloadCount = #{record.downloadCount,jdbcType=BIGINT},
+      </if>
+      <if test="record.flag != null" >
+        flag = #{record.flag,jdbcType=BIGINT},
+      </if>
+      <if test="record.info != null" >
+        info = #{record.info,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lyric != null" >
+        lyric = #{record.lyric,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mvId != null" >
+        mvId = #{record.mvId,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.playCount != null" >
+        playCount = #{record.playCount,jdbcType=BIGINT},
+      </if>
+      <if test="record.pure != null" >
+        pure = #{record.pure,jdbcType=BIGINT},
+      </if>
+      <if test="record.releaseTime != null" >
+        releaseTime = #{record.releaseTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.songFileKey != null" >
+        songFileKey = #{record.songFileKey,jdbcType=VARCHAR},
+      </if>
+      <if test="record.songUrl != null" >
+        songUrl = #{record.songUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.time != null" >
+        time = #{record.time,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=BIGINT},
+      </if>
+      <if test="record.userId != null" >
+        userId = #{record.userId,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update song
+    set id = #{record.id,jdbcType=BIGINT},
+      albumId = #{record.albumId,jdbcType=BIGINT},
+      albumName = #{record.albumName,jdbcType=VARCHAR},
+      area = #{record.area,jdbcType=BIGINT},
+      collectCount = #{record.collectCount,jdbcType=BIGINT},
+      coverUrl = #{record.coverUrl,jdbcType=VARCHAR},
+      downloadCount = #{record.downloadCount,jdbcType=BIGINT},
+      flag = #{record.flag,jdbcType=BIGINT},
+      info = #{record.info,jdbcType=VARCHAR},
+      lyric = #{record.lyric,jdbcType=VARCHAR},
+      mvId = #{record.mvId,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      playCount = #{record.playCount,jdbcType=BIGINT},
+      pure = #{record.pure,jdbcType=BIGINT},
+      releaseTime = #{record.releaseTime,jdbcType=BIGINT},
+      songFileKey = #{record.songFileKey,jdbcType=VARCHAR},
+      songUrl = #{record.songUrl,jdbcType=VARCHAR},
+      time = #{record.time,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=BIGINT},
+      userId = #{record.userId,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liaoyb.persistence.domain.vo.base.Song" >
+    update song
+    <set >
+      <if test="albumId != null" >
+        albumId = #{albumId,jdbcType=BIGINT},
+      </if>
+      <if test="albumName != null" >
+        albumName = #{albumName,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=BIGINT},
+      </if>
+      <if test="collectCount != null" >
+        collectCount = #{collectCount,jdbcType=BIGINT},
+      </if>
+      <if test="coverUrl != null" >
+        coverUrl = #{coverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadCount != null" >
+        downloadCount = #{downloadCount,jdbcType=BIGINT},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=BIGINT},
+      </if>
+      <if test="info != null" >
+        info = #{info,jdbcType=VARCHAR},
+      </if>
+      <if test="lyric != null" >
+        lyric = #{lyric,jdbcType=VARCHAR},
+      </if>
+      <if test="mvId != null" >
+        mvId = #{mvId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="playCount != null" >
+        playCount = #{playCount,jdbcType=BIGINT},
+      </if>
+      <if test="pure != null" >
+        pure = #{pure,jdbcType=BIGINT},
+      </if>
+      <if test="releaseTime != null" >
+        releaseTime = #{releaseTime,jdbcType=BIGINT},
+      </if>
+      <if test="songFileKey != null" >
+        songFileKey = #{songFileKey,jdbcType=VARCHAR},
+      </if>
+      <if test="songUrl != null" >
+        songUrl = #{songUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liaoyb.persistence.domain.vo.base.Song" >
+    update song
+    set albumId = #{albumId,jdbcType=BIGINT},
+      albumName = #{albumName,jdbcType=VARCHAR},
+      area = #{area,jdbcType=BIGINT},
+      collectCount = #{collectCount,jdbcType=BIGINT},
+      coverUrl = #{coverUrl,jdbcType=VARCHAR},
+      downloadCount = #{downloadCount,jdbcType=BIGINT},
+      flag = #{flag,jdbcType=BIGINT},
+      info = #{info,jdbcType=VARCHAR},
+      lyric = #{lyric,jdbcType=VARCHAR},
+      mvId = #{mvId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      playCount = #{playCount,jdbcType=BIGINT},
+      pure = #{pure,jdbcType=BIGINT},
+      releaseTime = #{releaseTime,jdbcType=BIGINT},
+      songFileKey = #{songFileKey,jdbcType=VARCHAR},
+      songUrl = #{songUrl,jdbcType=VARCHAR},
+      time = #{time,jdbcType=BIGINT},
+      type = #{type,jdbcType=BIGINT},
+      userId = #{userId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

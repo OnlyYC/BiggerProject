@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.DynamicMapperCustom">
+
+
+    <!--用户相关的动态-->
+    <select id="findDynamicRelative" resultType="com.liaoyb.persistence.domain.dto.DynamicDto">
+      SELECT dy.*,
+      COUNT(DISTINCT com.id) commentCount
+      FROM dynamic dy
+      JOIN (
+      SELECT T.id userId from (
+      SELECT col.targetId id FROM collect col where col.userId=#{userId} and col.collectType=5
+      UNION
+      SELECT u.id id FROM user u where u.userType=2 or u.id=#{userId}
+      )T
+      )IU ON dy.userId=IU.userId LEFT JOIN comment com ON(com.belong=dy.id and com.type=3 and com.fatherCommentId IS NULL)
+      GROUP BY dy.id
+      ORDER BY dy.date desc
+    </select>
+
+    <!--用户动态-->
+    <select id="findUserDynamic" resultType="com.liaoyb.persistence.domain.dto.DynamicDto">
+         SELECT dy.*,
+      COUNT(DISTINCT com.id) commentCount
+      FROM (select * from  dynamic
+      WHERE userId = #{userId})dy LEFT JOIN comment com ON(com.belong=dy.id and com.type=3 and com.fatherCommentId IS NULL)
+      GROUP BY dy.id
+      ORDER BY dy.date desc
+    </select>
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+
+	<bean id="smartyCfgMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="template.path" value="/WEB-INF/views/"/>
+				<entry key="encoding" value="UTF-8"/>
+			</map>
+		</constructor-arg>
+	</bean>
+	<!--模板引擎-->
+	<bean class="org.lilystudio.smarty4j.Engine">
+		<constructor-arg ref="smartyCfgMap"/>
+	</bean>
+	<!--自定义视图解析器-->
+	<bean class="com.liaoyb.support.smarty4j.SmartyViewResolver">
+		<property name="prefix" value="" />
+		<property name="suffix" value=".html" />
+	</bean>
+	
+
+
+	<!--Controller扫描-->
+	<context:component-scan base-package="com.liaoyb.web"/>
+
+
+	<!-- 使Controller注解起作用 -->
+	<mvc:annotation-driven/>
+
+
+	<!-- 静态资源映射 -->
+	<mvc:resources location="/static/" mapping="/static/**" />
+	
+	<!-- 主页,欢迎页 -->
+	<mvc:view-controller path="/" view-name="index"/>
+	<mvc:view-controller path="/index" view-name="index"/>
+	
+	<!-- 对无法mapping到Controller的path交给default  servlet  handler -->
+	<mvc:default-servlet-handler/>
+	
+	
+	
+	<!-- 也可也在这儿配置错误页面 -->
+<!-- 	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"> -->
+<!-- 		<property name="exceptionMappings"> -->
+<!-- 			<props> -->
+<!-- 				<prop key="org.apache.shiro.authz.UnauthorizedException">error/404.jsp</prop> -->
+<!-- 				<prop key="java.lang.Throwable">error/500.jsp</prop> -->
+<!-- 			</props> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+	<!-- 文件上传 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 设置上传文件的最大尺寸为5MB -->
+		<property name="defaultEncoding" value="UTF-8"/>
+		<!--<property name="maxUploadSize" value="5242880"/>-->
+	</bean>
+	
+	
+	
+	<!--自定义参数绑定         转换器 -->
+	
+	
+	<!-- 配置拦截器，权限拦截器,登陆拦截器 -->
+	<mvc:interceptors>
+		<bean class="com.liaoyb.support.interceptors.AuthInterceptor"></bean>
+	</mvc:interceptors>
+
+	
+	
+	<!-- 全局异常处理器 -->
+	
+	<!-- 校验器 -->
+	<bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/>
+
+
+	<!--异常切面-->
+	<bean class="com.liaoyb.support.exception.ExceptionAdvice"/>
+	
+	
+</beans>
