@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" class="app">
+<head>
+  <meta charset="utf-8"/>
+  <title>Music</title>
+  <meta name="description"
+        content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+  <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/jPlayer/jplayer.flat.css" type="text/css"/>
+  <link rel="stylesheet" href="{$baseUrl}/static/css/bootstrap.css" type="text/css"/>
+  <link rel="stylesheet" href="{$baseUrl}/static/css/animate.css" type="text/css"/>
+  <link rel="stylesheet" href="{$baseUrl}/static/css/font-awesome.min.css" type="text/css"/>
+  <link rel="stylesheet" href="{$baseUrl}/static/css/simple-line-icons.css" type="text/css"/>
+  <link rel="stylesheet" href="{$baseUrl}/static/css/font.css" type="text/css"/>
+  <link rel="stylesheet" href="{$baseUrl}/static/css/app.css" type="text/css"/>
+  <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.css" type="text/css"/>
+  <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/cropper/cropper.min.css">
+
+
+  <link rel="stylesheet" href="{$baseUrl}/static/css/loading/ball-clip-rotate-multiple.css">
+
+  <script>
+    var baseUrl = '{$baseUrl}';
+  </script>
+
+
+
+</head>
+<body class="">
+
+
+<section class="vbox">
+
+  <!--上侧导航 up-->
+  <header class="bg-white-only header header-md navbar navbar-fixed-top-xs">
+    <div class="navbar-header aside bg-info ">
+      <a class="btn btn-link visible-xs" data-toggle="class:nav-off-screen,open" data-target="#nav,html">
+        <i class="icon-list"></i>
+      </a>
+      <a href="index.html" data-bjax class="navbar-brand text-lt">
+        <i class="icon-earphones"></i>
+        <span class="hidden-nav-xs m-l-sm">EDEN</span>
+      </a>
+      <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".user">
+        <i class="icon-settings"></i>
+      </a>
+    </div>
+    <ul class="nav navbar-nav hidden-xs">
+      <li>
+        <a href="#nav,.navbar-header" data-toggle="class:nav-xs,nav-xs" class="text-muted ">
+          <i class="fa fa-indent text"></i>
+          <i class="fa fa-dedent  text-active"></i>
+        </a>
+      </li>
+    </ul>
+    <form class="navbar-form navbar-left input-s-lg m-t m-l-n-xs hidden-xs" role="search">
+      <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-sm bg-white btn-icon rounded"><i class="fa fa-search"></i></button>
+            </span>
+          <input type="text" class="form-control input-sm no-border rounded"
+                 placeholder="Search songs, albums...">
+        </div>
+      </div>
+    </form>
+  </header>
+  <section>
+    <section class="hbox stretch">
+      <!-- .aside left 左边导航栏 -->
+      <aside class="bg-black dk  aside hidden-print" id="nav">
+        <section class="vbox">
+          <section class="w-f-md scrollable">
+            <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0"
+                 data-size="10px" data-railOpacity="0.2">
+
+
+              <!-- nav -->
+              <nav class="nav-primary hidden-xs">
+
+
+                <ul class="nav bg clearfix">
+                  <li>
+                    <a href="/statistics" data-bjax>
+                      <i class="icon-disc icon text-success"></i>
+                      <span class="font-bold">数据统计</span>
+                    </a>
+                  </li>
+                  <li class="m-b hidden-nav-xs"></li>
+                </ul>
+
+                <ul class="nav" data-ride="collapse">
+                  <li>
+                    <a href="javascript:void(0);" class="auto">
+                                            <span class="pull-right text-muted">
+                                              <i class="fa fa-angle-left text"></i>
+                                              <i class="fa fa-angle-down text-active"></i>
+                                            </span>
+                      <i class="icon-grid icon">
+                      </i>
+                      <span>资源操作</span>
+                    </a>
+                    <ul class="nav dk text-sm">
+                      <li>
+                        <a href="/operation/song" data-bjax class="auto">
+                          <i class="fa fa-angle-right text-xs"></i>
+
+                          <span>音乐</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/operation/mv" data-bjax class="auto">
+                          <i class="fa fa-angle-right text-xs"></i>
+
+                          <span>MV</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/operation/artist" data-bjax class="auto">
+                          <i class="fa fa-angle-right text-xs"></i>
+
+                          <span>歌手</span>
+                        </a>
+                      </li>
+
+                      <!--<li>-->
+                      <!--<a href="layout-fluid.html" class="auto">-->
+                      <!--<i class="fa fa-angle-right text-xs"></i>-->
+
+                      <!--<span>歌单</span>-->
+                      <!--</a>-->
+                      <!--</li>-->
+                      <!--<li>-->
+                      <!--<a href="layout-fluid.html" class="auto">-->
+                      <!--<i class="fa fa-angle-right text-xs"></i>-->
+
+                      <!--<span>榜单</span>-->
+                      <!--</a>-->
+                      <!--</li>-->
+                      <!--<li>-->
+                      <!--<a href="layout-fluid.html" class="auto">-->
+                      <!--<i class="fa fa-angle-right text-xs"></i>-->
+
+                      <!--<span>用户</span>-->
+                      <!--</a>-->
+                      <!--</li>-->
+                    </ul>
+                  </li>
+
+
+                  <li class="m-b hidden-nav-xs"></li>
+                </ul>
+
+                {foreach from=$currentUser.roleType item=roleType name=foo}
+                {if $roleType eq 3}
+                <ul class="nav" data-ride="collapse">
+                  <li>
+                    <a href="javascript:void(0);" class="auto">
+                                            <span class="pull-right text-muted">
+                                              <i class="fa fa-angle-left text"></i>
+                                              <i class="fa fa-angle-down text-active"></i>
+                                            </span>
+                      <i class="icon-key icon">
+                      </i>
+                      <span>权限管理</span>
+                    </a>
+                    <ul class="nav dk text-sm">
+                      <li>
+                        <a href="layout-color.html" class="auto">
+                          <i class="fa fa-angle-right text-xs"></i>
+                          <b class="badge bg-primary pull-right">6</b>
+                          <span>处理申请</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="layout-boxed.html" class="auto">
+                          <i class="fa fa-angle-right text-xs"></i>
+
+                          <span>管理员</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="m-b hidden-nav-xs"></li>
+                </ul>
+                {/if}
+                {/foreach}
+
+
+
+              </nav>
+              <!-- / nav -->
+            </div>
+          </section>
+          <footer class="footer hidden-xs no-padder text-center-nav-xs">
+            <div class="bg hidden-xs ">
+              <div class="dropdown dropup wrapper-sm clearfix">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      <span class="thumb-sm avatar pull-left m-l-xs">
+                        <img src="{$currentUser.avatarUrl}" class="dker" alt="...">
+                        <i class="on b-black"></i>
+                      </span>
+                      <span class="hidden-nav-xs clear">
+                        <span class="block m-l">
+                          <strong class="font-bold text-lt">{$currentUser.name}</strong>
+                          <b class="caret"></b>
+                        </span>
+                      </span>
+                </a>
+                <ul class="dropdown-menu animated fadeInRight aside text-left">
+                  <li>
+                    <a href="javascript:void(0);" id="btn_logout">退出</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </footer>
+
+        </section>
+      </aside>
+
+      <!--中间内容 content -->
+      <section id="parContainer">
+        <section class="hbox stretch" id="content">
+          {literal}
+          <script id="user_st_count" type="text/html" >
+            <div class="row">
+              <div class="col-sm-4">
+                <h3 class="m-b-none">当前在线用户</h3>
+                <small>{{onlineCount}}</small>
+              </div>
+              <div class="col-sm-4">
+                <h3 class="m-b-none">总用户</h3>
+                <small>{{allCount}}</small>
+              </div>
+              <div class="col-sm-4">
+                <div class="text-right text-left-xs">
+                  <div class="m-t-md">
+                    <span class="text-uc">今日新增用户</span>
+                    <div class="h4 m-n"><strong>{{todayIncreaseCount}}</strong></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </script>
+          {/literal}
+          {literal}
+          <script>
+            var sex = [
+              {
+                label: "男",
+                data: 40
+              },
+              {
+                label: "女",
+                data: 40
+              },
+              {
+                label: "未知",
+                data: 20
+              }
+            ];
+            function init(){
+
+              userAccessChart();
+              //得到用户统计信息
+              server.statistics.userStatistics(function(data){
+                userStatisticsInfo=data.data;
+
+                //
+                var html = template('user_st_count', userStatisticsInfo);
+                $("#user_st_count_html").append(html);
+
+                //用户性别
+                var man_data=(userStatisticsInfo.manCount*100/userStatisticsInfo.allCount);
+                var woamn_data=(userStatisticsInfo.womanCount*100/userStatisticsInfo.allCount);
+                var unKnow_data=(userStatisticsInfo.unKnowCount*100/userStatisticsInfo.allCount);
+                sex=[
+                  {
+                    label: "男",
+                    data: man_data
+                  },
+                  {
+                    label: "女",
+                    data: woamn_data
+                  },
+                  {
+                    label: "未知",
+                    data: unKnow_data
+                  }
+                ];
+                userSexChart();
+
+              });
+            }
+
+            //用户访问情况表格
+            function userAccessChart(){
+              var d1 = [];
+              var dateArr=getDayBeforeTen();
+              for (var i = 0; i <10; i += 1) {
+                console.info(dateArr[i]);
+                d1.push([dateArr[i], parseInt((Math.floor(Math.random() * (1 + 20 - 10))) + 10)]);
+              }
+
+              //最近10天用户的访问信息，这里先随机
+              $("#user_access_situation").length && $.plot($("#user_access_situation"), [
+                        {
+                          data:d1
+                        }
+                      ],
+                      {
+                        series: {
+                          lines: {
+                            show: true,
+                            lineWidth: 1,
+                            fill: true,
+                            fillColor: {
+                              colors: [{
+                                opacity: 0.3
+                              }, {
+                                opacity: 0.3
+                              }]
+                            }
+                          },
+                          points: {
+                            radius: 3,
+                            show: true
+                          },
+                          grow: {
+                            active: true,
+                            steps: 20,
+                            growings:[
+                              {
+                                stepDirection: "down"
+                              }
+                            ]
+                          },
+                          shadowSize: 2
+                        },
+                        grid: {
+                          hoverable: true,
+                          clickable: true,
+                          tickColor: "#f0f0f0",
+                          borderWidth: 1,
+                          color: '#f0f0f0'
+                        },
+                        colors: ["#1bb399"],
+                        xaxis:{
+                          mode: "time",
+                          timeformat: "%m-%d"
+                        },
+                        yaxis: {
+                          ticks: 10,
+                          min:0,
+                          max:20
+
+                        },
+                        tooltip: true,
+                        tooltipOpts: {
+                          content: "chart: %x.1 is %y.4",
+                          defaultTheme: false,
+                          shifts: {
+                            x: 0,
+                            y: 20
+                          }
+                        }
+                      }
+              );
+            }
+
+            //用户性别表格
+            function userSexChart(){
+              $("#sex_distribution").length && $.plot($("#sex_distribution"), sex, {
+                series: {
+                  pie: {
+                    combine: {
+                      color: "#999",
+                      threshold: 0.05
+                    },
+                    show: true
+                  }
+                },
+                colors: ["#1ccacc","#FB0A36","#3993bb"],
+                legend: {
+                  show: false
+                },
+                grid: {
+                  hoverable: true,
+                  clickable: false
+                },
+                tooltip: true,
+                tooltipOpts: {
+                  content: "%s: %p.0%"
+                }
+              });
+
+            }
+
+
+
+          </script>
+          {/literal}
+          <section class="vbox">
+
+            <section class="scrollable padder-lg" >
+              <div class="m-b-md" id="user_st_count_html">
+
+
+              </div>
+
+
+
+
+              <section class="panel panel-default">
+                <header class="panel-heading font-bold">最近10天用户访问情况</header>
+                <div class="panel-body">
+                  <div id="user_access_situation" style="height:250px"></div>
+                </div>
+              </section>
+
+
+
+              <section class="panel panel-default">
+                <header class="panel-heading font-bold">用户性别分布</header>
+                <div class="panel-body">
+                  <div id="sex_distribution"  style="height:240px"></div>
+                </div>
+              </section>
+
+            </section>
+
+          </section>
+
+
+        </section>
+
+        <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen,open"
+           data-target="#nav,html"></a>
+      </section>
+
+    </section>
+  </section>
+
+</section>
+<script src="{$baseUrl}/static/scripts/libs/jquery.min.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jquery-jtemplates.js"></script>
+<!-- Bootstrap -->
+<script src="{$baseUrl}/static/scripts/libs/bootstrap.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/slimscroll/jquery.slimscroll.min.js"></script>
+<!--bootstrap-paginator-->
+
+<script src="{$baseUrl}/static/scripts/libs/bootstrap-paginator/bootstrap-paginator.js"></script>
+<!--jplayer-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/jquery.jplayer.min.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/add-on/jplayer.playlist.min.js"></script>
+<!-- datatables -->
+<script src="{$baseUrl}/static/scripts/libs/datatables/jquery.dataTables.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.js"></script>
+<!--notice-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/notice/notie.js"></script>
+<!--template-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/artTemplate/template.js"></script>
+
+<!-- Flot -->
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.tooltip.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.resize.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.orderBars.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.pie.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.grow.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.time.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/demo.js"></script>
+<!-- App -->
+<script src="{$baseUrl}/static/scripts/common/app.js"></script>
+<script src="{$baseUrl}/static/scripts/common/app.plugin.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/my_player.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/common/common.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/dao/dao.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/service/server.js"></script>
+
+<script>
+  init();
+</script>
+
+
+</body>
+</html>

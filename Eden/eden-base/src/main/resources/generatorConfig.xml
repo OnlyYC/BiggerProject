@@ -61,11 +61,11 @@
 
  <!-- 配置表信息 ,useActualColumnNames按照表中的列名-->
 
-    <table tableName="song" >
-        <property name="useActualColumnNames" value="true"/>
-        <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        <columnOverride column="lyric" jdbcType="VARCHAR"/>
-    </table>
+    <!--<table tableName="song" >-->
+        <!--<property name="useActualColumnNames" value="true"/>-->
+        <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        <!--<columnOverride column="lyric" jdbcType="VARCHAR"/>-->
+    <!--</table>-->
 
     <!--<table tableName="album">-->
       <!--<property name="useActualColumnNames" value="true"/>-->
@@ -114,10 +114,16 @@
       <!--<property name="useActualColumnNames" value="true"/>-->
       <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
     <!--</table>-->
-    <!--<table tableName="user">-->
-      <!--<property name="useActualColumnNames" value="true"/>-->
-      <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
-    <!--</table>-->
+    <table tableName="user">
+    <property name="useActualColumnNames" value="true"/>
+    <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+  </table>
+
+    <table tableName="visit_record">
+      <property name="useActualColumnNames" value="true"/>
+      <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+    </table>
+
     <!--<table tableName="userlisten">-->
       <!--<property name="useActualColumnNames" value="true"/>-->
       <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->

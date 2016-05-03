@@ -1,0 +1,39 @@
+
+
+{#foreach $T as record}
+
+{#if $T.record.type==1}
+<span  class="media list-group-item mess" data-time="{$T.record.date}" data-id="{$T.record.id}">
+    <a href="/userHome/{$T.record.fromUser}" data-bjax class="pull-left thumb-sm">
+        <img src="{$T.record.fromUserAvatar}" alt="..." class="img-circle">
+    </a>
+    <span class="pull-right h3 click notClose removeMess">
+        &times;
+    </span>
+    <span class="media-body block m-b-none">
+      <div>{$T.record.content}</div>
+      <small class="text-muted">{fmtDate($T.record.date,'yyyy-MM-dd hh:mm')}</small>
+    </span>
+
+    <div class="clearfix"></div>
+</span>
+{#elseif $T.record.type==2}
+
+
+<span  class="media list-group-item mess" data-time="{$T.record.date}" data-id="{$T.record.id}">
+    <span class="pull-left thumb-sm text-center">
+        <i class="fa fa-envelope-o fa-2x text-success"></i>
+    </span>
+    <span class="pull-right h3 click notClose removeMess">
+        &times;
+    </span>
+    <span class="media-body block m-b-none">
+        <span class="text-ellipsis text-xs text-muted">{$T.record.content}</span>
+        <small class="text-muted">{fmtDate($T.record.date,'yyyy-MM-dd hh:mm')}</small>
+    </span>
+    <div class="clearfix"></div>
+</span>
+{#/if}
+
+
+{#/for}

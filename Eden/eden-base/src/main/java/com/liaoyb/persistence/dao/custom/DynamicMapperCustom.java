@@ -1,6 +1,7 @@
 package com.liaoyb.persistence.dao.custom;
 
 import com.liaoyb.persistence.domain.dto.DynamicDto;
+import com.liaoyb.persistence.domain.vo.base.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -24,4 +25,18 @@ public interface DynamicMapperCustom {
      * @return
      */
     public List<DynamicDto> findUserDynamic(@Param("userId") Long userId);
+
+    /**
+     * 赞
+     * @param id
+     */
+    int praise(Long id);
+
+
+    /**
+     * 当用户信息改变时，修改动态相关信息
+     * @param user
+     * @return
+     */
+    int updateDynamicWhenUserInfoUpdate(@Param("user") User user);
 }

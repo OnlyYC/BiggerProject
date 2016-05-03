@@ -1,6 +1,7 @@
 package com.liaoyb.persistence.service;
 
 import com.liaoyb.base.domain.Page;
+import com.liaoyb.base.support.exception.PermissionDeniedException;
 import com.liaoyb.persistence.domain.dto.*;
 import com.liaoyb.persistence.domain.vo.base.Songlist;
 import com.liaoyb.persistence.domain.vo.base.User;
@@ -98,11 +99,42 @@ public interface UserService {
 
     /**
      * 用户登录
-     * @param usercode 用户名或邮箱
+     * @param email 用户邮箱
      * @param password 密码
      * @return 用户
      */
-    public UserDto userlogin(String usercode, String password);
+    public UserDto userLogin(String email, String password,String ip);
+
+    /**
+     * 用户退出
+     * @param userDto
+     * @param ip
+     */
+    public void userLogout(UserDto userDto,String ip);
+
+
+    /**
+     * 查找用户UserDto
+     * @param userId
+     * @return
+     */
+    public UserDto findUserDto(Long userId);
+
+
+    /**
+     * 管理员登录
+     * @param email
+     * @param password
+     * @return
+     */
+    public UserDto adminLogin(String email,String password,String ip) throws Exception;
+
+    /**
+     * 管理员退出
+     * @param userDto
+     * @param ip
+     */
+    public void adminLogout(UserDto userDto,String ip);
 
 
 

@@ -1,6 +1,7 @@
 package com.liaoyb.persistence.dao.custom;
 
 import com.liaoyb.persistence.domain.vo.base.Mess;
+import com.liaoyb.persistence.domain.vo.base.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -47,4 +48,18 @@ public interface MessMapperCustom {
      * @return
      */
     int updateMessRead(@Param("userId") Long userId,@Param("messId") Long[] messId);
+
+
+    /**
+     * 还未处理的申请
+     * @return
+     */
+    List<Mess>findNotYetDisponseApplication();
+
+    /**
+     * 当用户信息改变时，修改消息的相关信息
+     * @param user
+     * @return
+     */
+    int updateMesWhenUserInfoUpdate(@Param("user") User user);
 }

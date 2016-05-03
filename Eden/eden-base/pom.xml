@@ -5,7 +5,7 @@
     <parent>
         <artifactId>com.liaoyb</artifactId>
         <groupId>eden</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -117,6 +117,13 @@
         </dependency>
 
 
+        <!--web-->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+
+
 
 
         <!--存储service-->
@@ -125,6 +132,7 @@
             <artifactId>fileStore-service-api</artifactId>
             <version>1.0</version>
         </dependency>
+
         <!--dubbo-->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -137,13 +145,25 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.caucho</groupId>
+            <artifactId>hessian</artifactId>
+            <version>4.0.7</version>
+        </dependency>
 
         <!-- zookeeper -->
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.4.7</version>
+        </dependency>
         <dependency>
             <groupId>com.github.sgroschupf</groupId>
             <artifactId>zkclient</artifactId>
             <version>0.1</version>
         </dependency>
+
+
 
     </dependencies>
 

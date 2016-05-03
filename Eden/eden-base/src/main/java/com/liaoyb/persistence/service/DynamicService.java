@@ -2,6 +2,7 @@ package com.liaoyb.persistence.service;
 
 import com.liaoyb.base.domain.Page;
 import com.liaoyb.persistence.domain.dto.DynamicDto;
+import com.liaoyb.persistence.domain.vo.base.Dynamic;
 
 import java.util.List;
 
@@ -25,4 +26,17 @@ public interface DynamicService {
      * @return
      */
     public Page<DynamicDto>findUserDynamic(Page<DynamicDto> page, Long userId);
+
+
+    /**
+     * 发布动态
+     * @param dynamic
+     */
+    public void submitDynaic(Dynamic dynamic);
+
+    /**
+     * 赞
+     * @param id
+     */
+    public void praise(Long id);
 }

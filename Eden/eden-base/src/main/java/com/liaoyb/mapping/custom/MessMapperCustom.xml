@@ -12,6 +12,22 @@
     </update>
 
 
+    <!--当用户信息改变时，修改消息的相关信息-->
+    <update id="updateMesWhenUserInfoUpdate">
+
+        UPDATE mess
+        <set>
+            <if test="user.name!=null">
+                fromUserName=#{user.name},
+            </if>
+            <if test="user.avatarUrl!=null">
+                fromUserAvatar=#{user.avatarUrl},
+            </if>
+        </set>
+        where fromUser=#{user.id}
+    </update>
+
+
     <!--用户的所有信息-->
     <select id="findUserAllMess" resultType="com.liaoyb.persistence.domain.vo.base.Mess">
         SELECT * FROM mess where toUser=#{userId}
@@ -39,4 +55,12 @@
         </if>
         ORDER BY me.date DESC
     </select>
+
+
+    <!--还未处理的申请-->
+    <select id="findNotYetDisponseApplication" resultType="com.liaoyb.persistence.domain.vo.base.Mess">
+        SELECT * from mess WHERE  looked=0 and type=3
+    </select>
+
+
 </mapper>

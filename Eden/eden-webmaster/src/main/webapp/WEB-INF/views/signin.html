@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" class="app">
+<head>
+    <meta charset="utf-8"/>
+    <title>Musik | Web Application</title>
+    <meta name="description"
+          content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/jPlayer/jplayer.flat.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/bootstrap.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/animate.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/font-awesome.min.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/simple-line-icons.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/font.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/app.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.css"
+          type="text/css"/>
+
+
+    <link rel="stylesheet" href="{$baseUrl}/static/css/loading/ball-clip-rotate-multiple.css">
+
+</head>
+<body class="bg-info dker">
+<section id="content" class="m-t-lg wrapper-md animated fadeInUp">
+    <div class="container aside-xl">
+        <a class="navbar-brand block" href="index.html"><span class="h1 font-bold">EDEN</span></a>
+        <section class="m-b-lg">
+            <header class="wrapper text-center">
+                <strong>后台管理</strong>
+            </header>
+            <form action="{$baseUrl}/api/admin/adminLogin" method="post" name="admin_login_form">
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email"
+                           class="form-control rounded input-lg text-center no-border">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Password"
+                           class="form-control rounded input-lg text-center no-border">
+                </div>
+            </form>
+            <button id="admin_login_btn" class="btn btn-lg btn-warning lt b-white b-2x btn-block btn-rounded"><i
+                    class="icon-arrow-right pull-right"></i><span class="m-r-n-lg">登录</span></button>
+
+            <div class="line line-dashed"></div>
+            <p class="text-muted text-center">
+                <small>还没有管理员权限?</small>
+            </p>
+            <a href="signup.html" class="btn btn-lg btn-info btn-block rounded">填写申请</a>
+        </section>
+    </div>
+</section>
+<!-- footer -->
+<footer id="footer">
+    <div class="text-center padder">
+        <p>
+            <small>EDEN<br>Copyright&copy; 2015</small>
+        </p>
+    </div>
+</footer>
+<script src="{$baseUrl}/static/scripts/libs/jquery.min.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jquery-jtemplates.js"></script>
+<!-- Bootstrap -->
+<script src="{$baseUrl}/static/scripts/libs/bootstrap.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/slimscroll/jquery.slimscroll.min.js"></script>
+<!--bootstrap-paginator-->
+
+<script src="{$baseUrl}/static/scripts/libs/bootstrap-paginator/bootstrap-paginator.js"></script>
+<!--jplayer-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/jquery.jplayer.min.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/add-on/jplayer.playlist.min.js"></script>
+<!-- datatables -->
+<script src="{$baseUrl}/static/scripts/libs/datatables/jquery.dataTables.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.js"></script>
+<!--notice-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/notice/notie.js"></script>
+<!--template-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/artTemplate/template.js"></script>
+<!-- App -->
+<script src="{$baseUrl}/static/scripts/common/app.js"></script>
+<script src="{$baseUrl}/static/scripts/common/app.plugin.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/my_player.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/common/common.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/dao/dao.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/service/server.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/service/user_login_register.js"></script>
+
+
+<!--登录-->
+<script>
+
+    (function ($) {
+        $("#admin_login_btn").click(function () {
+            var form=$('form[name="admin_login_form"]');
+            var that=$(this);
+            if(typeof(that.attr("disabled"))!="undefined"){
+                return;
+            }
+            $.ajax({
+                url: form.attr('action'),
+                data: form.serialize(),
+                type: 'post',
+                beforeSend: function () {//3.让提交按钮失效，以实现防止按钮重复点击
+                    that.attr('disabled', 'disabled');
+
+                    //4.给用户提供友好状态提示
+                    that.text('登录中...');
+                },
+                complete: function () {
+                },
+                success: function (data) {
+
+                    Base.processData(data,function(data){
+                        //登录成功，跳转到首页
+                        Alert.success("登录成功");
+                        window.location.href='{$baseUrl}/index';
+                    },function(){
+                        //5.让登陆按钮重新有效
+                        that.text('登录');
+                        that.removeAttr('disabled');
+                    })
+
+                }
+            });
+
+        });
+
+    })(jQuery)
+</script>
+
+</body>
+</html>

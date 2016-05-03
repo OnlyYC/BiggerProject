@@ -2,6 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.liaoyb.persistence.dao.custom.DynamicMapperCustom">
 
+    <!--赞-->
+    <update id="praise">
+        UPDATE dynamic SET praiseCount=praiseCount+1 WHERE id=#{id}
+    </update>
+
+
+    <!--当用户信息改变时，修改动态相关信息-->
+    <update id="updateDynamicWhenUserInfoUpdate">
+
+        UPDATE dynamic
+        <set>
+            <if test="user.name!=null">
+                username=#{user.name},
+            </if>
+            <if test="user.avatarUrl!=null">
+                userAvatarUrl=#{user.avatarUrl},
+            </if>
+        </set>
+        where userId=#{user.id}
+
+    </update>
+
 
     <!--用户相关的动态-->
     <select id="findDynamicRelative" resultType="com.liaoyb.persistence.domain.dto.DynamicDto">

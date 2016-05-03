@@ -40,4 +40,11 @@ public interface MessService {
      * @return
      */
     boolean readMess(Long userId, Long[] messId);
+
+    /**
+     * 发送消息
+     * @param mess
+     * @return
+     */
+    boolean sendMess(Mess mess);
 }

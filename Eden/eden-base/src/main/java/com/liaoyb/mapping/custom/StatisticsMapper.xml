@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaoyb.persistence.dao.custom.StatisticsMapper">
+
+    <!--用户统计，当前在线用户，所有用户，今日新增用户-->
+    <select id="userStatistics" resultType="com.liaoyb.persistence.domain.dto.UserStatisticsInfo">
+        SELECT (SELECT COUNT(u.id) from user u where  u.state=1) allCount,
+        (SELECT COUNT(u.id) from user u where u.onlineState=1 and u.state=1) onlineCount,
+        (SELECT COUNT(u.id) from user u where u.sex=1 and u.state=1) manCount,
+        (SELECT COUNT(u.id) from user u where u.sex=2 and u.state=1) womanCount,
+        (SELECT COUNT(u.id) from user u where u.sex=3 and u.state=1) unKnowCount,
+        (SELECT COUNT(u.id) from user u where u.registerTime>(UNIX_TIMESTAMP(CURDATE())*1000) and u.state=1) todayIncreaseCount
+        FROM dual
+    </select>
+
+
+    <!--时间段，用户的访问量-->
+    <select id="userAccessCount" resultType="java.lang.Integer">
+      select DISTINCT(T.id) (
+        SELECT vr.userId from visit_record vr where vr.createTime>#{begTime} or <![CDATA[  vr.createTime<#{endTime}  ]]>   and vr.type=0
+        union
+        SELECT vr.userId from visit_record vr where    <![CDATA[  vr.createTime<#{endTime}  ]]>  and vr.type=1
+        )T
+    </select>
+</mapper>

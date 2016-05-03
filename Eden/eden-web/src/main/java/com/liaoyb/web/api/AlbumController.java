@@ -44,6 +44,7 @@ public class AlbumController {
     //专辑中的歌曲列表,分页
     @RequestMapping("/findSongInAlbum")
     public void findSongInAlbum(HttpServletRequest request, HttpServletResponse response, Page<SongDto> page, Long albumId){
+        WebUtils.setPage(page,request);
         //当前用户
         User currentUser= WebUtils.getCurrentUser(request);
         page=albumService.findSongDtoInAlbum(page,albumId,currentUser!=null?currentUser.getId():null);

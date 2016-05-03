@@ -21,6 +21,7 @@ import com.liaoyb.persistence.service.SonglistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
@@ -164,12 +165,18 @@ public class SonglistServiceImpl implements SonglistService {
      * @return
      */
     @Override
+    @Transactional
     public boolean dealSonglistById(Long songlistId) {
+        Assert.notNull(songlistId);
         Songlist songlist=new Songlist();
         songlist.setId(songlistId);
         songlist.setFlag(SysCode.FLAG.INVALID);
-        songlistMapper.updateByPrimaryKeySelective(songlist);
-        return true;
+        int affect=songlistMapper.updateByPrimaryKeySelective(songlist);
+        if(affect>0){
+            return true;
+        }
+        return false;
+
     }
 
 
@@ -202,6 +209,7 @@ public class SonglistServiceImpl implements SonglistService {
      * @return
      */
     @Override
+    @Transactional
     public boolean updateSonglist(Songlist songlist) {
         songlist.setLastUpdate(new Date().getTime());
         songlistMapper.updateByPrimaryKeySelective(songlist);
@@ -278,5 +286,50 @@ public class SonglistServiceImpl implements SonglistService {
         songlist.setUsername(user.getName());
         songlistMapper.insertSelective(songlist);
         return new Response().success("新建歌单成功",null);
+    }
+
+    /**
+     * 歌单是否用户自己的
+     *
+     * @param songlistId
+     * @param userId
+     * @return
+     */
+    @Override
+    public boolean userOwn(Long songlistId, Long userId) {
+        Assert.notNull(songlistId,"歌单不能为空");
+        Assert.notNull(userId,"用户id不能为空");
+        Songlist songlist=new Songlist();
+        songlist.setId(songlistId);
+        songlist.setUserId(userId);
+        songlist.setType(SysCode.SONGLIST_TYPE.COMMON_LIST);
+        List<Songlist>songlists=songlistMapperCustom.findsonglistQuery(songlist);
+        if(songlists.size()==1){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 从歌单中移除歌曲
+     *
+     * @param songlistWithSong
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean removeSongFromSonglist(SonglistWithSong songlistWithSong) {
+        Assert.notNull(songlistWithSong);
+        Assert.notNull(songlistWithSong.getSongId());
+        Assert.notNull(songlistWithSong.getSonglistId());
+        SonglistWithSongExample songlistWithSongExample=new SonglistWithSongExample();
+        SonglistWithSongExample.Criteria criteria=songlistWithSongExample.createCriteria();
+        criteria.andSonglistIdEqualTo(songlistWithSong.getSonglistId());
+        criteria.andSongIdEqualTo(songlistWithSong.getSongId());
+        int affect=songlistWithSongMapper.deleteByExample(songlistWithSongExample);
+        if(affect==1){
+            return true;
+        }
+        return false;
     }
 }

@@ -7,6 +7,7 @@ import com.liaoyb.base.support.exception.SourcesNotFoundException;
 import com.liaoyb.persistence.domain.dto.Response;
 import com.liaoyb.support.utils.MyResultUtil;
 import com.liaoyb.support.utils.WebUtils;
+import com.liaoyb.util.BaseWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -72,7 +73,7 @@ public class ExceptionAdvice {
 	@ExceptionHandler(TypeMismatchException.class)
 	public void typeMismatchException(HttpServletRequest requeset, HttpServletResponse response, TypeMismatchException e) throws ServletException, IOException {
 		logger.error("参数转换失败");
-		if(WebUtils.isAjaxRequest(requeset)){
+		if(BaseWebUtils.isAjaxRequest(requeset)){
 			//ajax请求
 
 			MyResultUtil.sendResponse(response,new Response().failure("参数转换失败"));
@@ -125,28 +126,44 @@ public class ExceptionAdvice {
      */
 	//@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(NotLoginException.class)
-	public void handleNotLoginException(HttpServletResponse response,NotLoginException e) {
+	public void handleNotLoginException(HttpServletRequest request,HttpServletResponse response,NotLoginException e) throws ServletException, IOException {
 
 
 		logger.debug("未登录");
-		MyResultUtil.sendResponse(response,new Response().notLogin());
+
+		if(BaseWebUtils.isAjaxRequest(request)){
+			//ajax请求
+
+			MyResultUtil.sendResponse(response,new Response().notLogin());
+		}else{
+			//转发到404页面
+			request.getRequestDispatcher(request.getContextPath()+"/notFound").forward(request,response);
+		}
 	}
 
 
 	//@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(PermissionDeniedException.class)
-	public void handlePermissionDeniedException(HttpServletResponse response,PermissionDeniedException e) {
+	public void handlePermissionDeniedException(HttpServletRequest request,HttpServletResponse response,PermissionDeniedException e) throws ServletException, IOException {
 
 
 		logger.debug("权限不足");
-		MyResultUtil.sendResponse(response,new Response().permissionDenied());
+
+		if(BaseWebUtils.isAjaxRequest(request)){
+			//ajax请求
+
+			MyResultUtil.sendResponse(response,new Response().permissionDenied());
+		}else{
+			//转发到404页面
+			request.getRequestDispatcher(request.getContextPath()+"/notFound").forward(request,response);
+		}
 	}
 
 	//资源未找到
 	@ExceptionHandler(SourcesNotFoundException.class)
 	public void handleSourcesNotFoundException(HttpServletRequest request, HttpServletResponse response, SourcesNotFoundException e) throws ServletException, IOException {
 		logger.debug("请求资源未找到");
-		if(WebUtils.isAjaxRequest(request)){
+		if(BaseWebUtils.isAjaxRequest(request)){
 			//ajax请求
 
 			MyResultUtil.sendResponse(response,new Response().failure("请求资源未找到"));
@@ -167,9 +184,8 @@ public class ExceptionAdvice {
 		//自定义异常
 		logger.error("服务运行异常", e);
 
-		if(WebUtils.isAjaxRequest(request)){
+		if(BaseWebUtils.isAjaxRequest(request)){
 			//ajax请求
-
 			if(e instanceof CustomException){
 				MyResultUtil.sendResponse(response,new Response().failure(e.getMessage()));
 			}else{

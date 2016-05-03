@@ -2,20 +2,27 @@ package com.liaoyb.web.api;
 
 import com.liaoyb.base.SysCode;
 import com.liaoyb.base.domain.Page;
+import com.liaoyb.base.support.exception.SourcesNotFoundException;
+import com.liaoyb.filestore.service.FileStoreService;
 import com.liaoyb.persistence.domain.dto.SongDto;
 import com.liaoyb.persistence.domain.dto.UserDto;
+import com.liaoyb.persistence.domain.vo.base.Songlist;
 import com.liaoyb.persistence.domain.vo.base.User;
 import com.liaoyb.persistence.domain.vo.custom.SongCustom;
 import com.liaoyb.persistence.service.SongService;
-import com.liaoyb.base.support.exception.SourcesNotFoundException;
+import com.liaoyb.persistence.service.SongTypeService;
 import com.liaoyb.support.utils.MyResultUtil;
 import com.liaoyb.support.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 音乐Controller
@@ -27,6 +34,12 @@ public class SongController {
 
     @Autowired
     private SongService songService;
+
+    @Autowired
+    private FileStoreService fileStoreService;
+
+    @Autowired
+    private SongTypeService songTypeService;
 
 
 
@@ -184,6 +197,43 @@ public class SongController {
         page=songService.findSong(page,type,searchText);
         MyResultUtil.sendPage(response,page);
     }
+
+
+
+    /**
+     * 歌曲，mv下载
+     * @param request
+     * @param response
+     * @param songId
+     * @throws Exception
+     */
+    @RequestMapping("/download/{songId}")
+    public void download(HttpServletRequest request,HttpServletResponse response,@PathVariable Long songId) throws Exception {
+       songService.download(request,response,songId);
+
+    }
+
+
+
+
+    /**
+     * 歌曲分类查找,分页
+     * @param response
+     * @param page
+     */
+    @RequestMapping("/findSongCustomsBySongType")
+    public void findSongCustomsBySongType(HttpServletResponse response, Page<SongCustom>page, @RequestParam(value = "typeId[]",required = false)Long[] typeId){
+        //数组转为集合
+
+        List<Long> typeIds=null;
+        if(typeId!=null){
+            typeIds= Arrays.asList(typeId);
+        }
+        page=songTypeService.findSongCustomsBySongType(page,typeIds,SysCode.SONG_TYPE.SONG);
+        MyResultUtil.sendPage(response,page);
+    }
+
+
 
 
 

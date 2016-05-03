@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.liaoyb.base.Dictionary;
 import com.liaoyb.base.SysCode;
 import com.liaoyb.base.annotation.AuthPassport;
+import com.liaoyb.base.support.exception.PermissionDeniedException;
 import com.liaoyb.persistence.domain.dto.ArtistDto;
 import com.liaoyb.persistence.domain.dto.SonglistDto;
 import com.liaoyb.persistence.domain.dto.UserDto;
 import com.liaoyb.persistence.domain.dto.UserInfo;
 import com.liaoyb.persistence.domain.vo.base.Album;
+import com.liaoyb.persistence.domain.vo.base.Songlist;
 import com.liaoyb.persistence.domain.vo.base.User;
 import com.liaoyb.persistence.domain.vo.custom.SongCustom;
 import com.liaoyb.persistence.service.*;
@@ -44,6 +46,16 @@ public class PageJumpController {
     @Autowired
     private UserService userService;
 
+
+    /**
+     * 添加歌曲要用户登录
+     * @return
+     */
+    @RequestMapping("/addSong")
+    @AuthPassport
+    public String addSong(){
+        return "addSong";
+    }
 
 
 
@@ -89,6 +101,31 @@ public class PageJumpController {
         return "songlist";
 
 
+    }
+
+
+    /**
+     * 歌单信息修改页面
+     * 必须要是用户自己创建的
+     * @param request
+     * @param songlistId
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @AuthPassport
+    @RequestMapping("/updateSonglist/{songlistId}")
+    public String updateSonglist(HttpServletRequest request, @PathVariable Long songlistId, Map map) throws Exception {
+        UserDto userDto=WebUtils.getCurrentUser(request);
+        boolean isuser=songlistService.userOwn(songlistId,userDto.getId());
+        if(isuser){
+            //歌单
+            Songlist songlist=songlistService.findSonglistById(songlistId);
+            map.put("songlist",songlist);
+            return "editSonglist";
+        }else {
+            throw new PermissionDeniedException();
+        }
     }
 
 
@@ -195,6 +232,17 @@ public class PageJumpController {
         }
 
         return "otherUserHome";
+    }
+
+    /**
+     * 用户修改个人信息
+     * @param request
+     * @return
+     */
+    @RequestMapping("/editUserInfo")
+    @AuthPassport
+    public String editUserInfo(HttpServletRequest request){
+        return "editUserInfo";
     }
 
     /**

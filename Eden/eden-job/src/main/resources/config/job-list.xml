@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!--会话超时检测job-->
+    <bean id="sessionTimeoutDetectService" class="com.liaoyb.job.service.SessionTimeoutDetectService"/>
+    <bean id="job-sessionTimeout" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="sessionTimeoutDetectService"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="concurrent" value="false" />
+    </bean>
+    <bean id="trigger-sessionTimeout" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="job-sessionTimeout" />
+        <property name="startDelay" value="3000" />
+
+        <!--每2分钟-->
+        <property name="repeatInterval" value="120000" />
+    </bean>
+
+    <!--生成每日推荐列表job-->
+    <bean id="generateTipListService" class="com.liaoyb.job.service.GenerateTipListService"/>
+    <bean id="job-generateTipList" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="generateTipListService"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="concurrent" value="false" />
+    </bean>
+    <bean id="trigger-generateTipList" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="job-generateTipList" />
+        <!--每天5点-->
+        <property name="cronExpression" value="0 0 5 * * ?"/>
+    </bean>
+
+
+    <!--统计用户播放记录生成用户偏好job-->
+    <bean id="generateUserPreferenceService" class="com.liaoyb.job.service.GenerateUserPreferenceService"/>
+    <bean id="job-generateUserPreference" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="generateUserPreferenceService"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="concurrent" value="false" />
+    </bean>
+    <bean id="trigger-generateUserPreference" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="job-generateUserPreference" />
+        <!--每天2点-->
+        <property name="cronExpression" value="0 0 2 * * ?"/>
+    </bean>
+
+
+</beans>

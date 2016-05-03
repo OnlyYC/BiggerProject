@@ -29,6 +29,14 @@ public class User {
 
     private Long state;
 
+    private Long userType;
+
+    private Long onlineState;
+
+    private String token;
+
+    private Long lastActivityTime;
+
     public Long getId() {
         return id;
     }
@@ -139,5 +147,37 @@ public class User {
 
     public void setState(Long state) {
         this.state = state;
+    }
+
+    public Long getUserType() {
+        return userType;
+    }
+
+    public void setUserType(Long userType) {
+        this.userType = userType;
+    }
+
+    public Long getOnlineState() {
+        return onlineState;
+    }
+
+    public void setOnlineState(Long onlineState) {
+        this.onlineState = onlineState;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token == null ? null : token.trim();
+    }
+
+    public Long getLastActivityTime() {
+        return lastActivityTime;
+    }
+
+    public void setLastActivityTime(Long lastActivityTime) {
+        this.lastActivityTime = lastActivityTime;
     }
 }

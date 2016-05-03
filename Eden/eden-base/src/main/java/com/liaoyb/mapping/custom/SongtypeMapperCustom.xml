@@ -57,7 +57,10 @@
 
     <!--根据歌曲分类找到其中的歌单-->
     <select id="findSonglistBySongtype" resultType="Songlist">
-        select * from songlist where id
+        select * from songlist
+        <where>
+        <if test="typeIds!=null and typeIds.size()!=0">
+        id
         in
         (select myinner.songlistId from (
         select s_w_t.songlistId,count(s_w_t.typeId) co from songlist_with_type s_w_t
@@ -83,5 +86,9 @@
 
         )myinner
         )
+        </if>
+
+        and type=1
+        </where>
     </select>
 </mapper>

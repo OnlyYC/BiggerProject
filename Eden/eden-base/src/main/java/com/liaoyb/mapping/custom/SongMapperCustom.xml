@@ -74,6 +74,11 @@
         as `like` from song s
     </sql>
 
+    <!--对歌曲下载量加1-->
+    <insert id="addOneSongDownloadCount">
+        UPDATE song set downloadCount=downloadCount+1 WHERE id=#{songId}
+    </insert>
+
     <!--对歌曲收藏量加1-->
     <update id="addOneSongCollectCount">
         UPDATE song set collectCount=collectCount+1 where id=#{songId}
@@ -250,11 +255,14 @@
             <if test="type!=null">
                 AND s.type=#{type}
             </if>
-
-            AND(s.name LIKE CONCAT(CONCAT('%',#{searchText}),'%')
+            <if test="searchText!=null">
+            AND(
+            s.name LIKE CONCAT(CONCAT('%',#{searchText}),'%')
             OR s.albumName LIKE CONCAT(CONCAT('%',#{searchText}),'%')
             OR s.info LIKE CONCAT(CONCAT('%',#{searchText}),'%')
+
             )
+            </if>
         </where>
     </select>
 

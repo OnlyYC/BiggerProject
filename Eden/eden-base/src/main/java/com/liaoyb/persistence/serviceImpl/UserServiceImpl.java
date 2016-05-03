@@ -3,11 +3,11 @@ package com.liaoyb.persistence.serviceImpl;
 import com.liaoyb.base.SysCode;
 import com.liaoyb.base.annotation.PageAnnotation;
 import com.liaoyb.base.domain.Page;
+import com.liaoyb.base.enums.UserRoleTypeEnum;
+import com.liaoyb.base.support.exception.PermissionDeniedException;
 import com.liaoyb.base.support.utils.CollectionUtil;
 import com.liaoyb.persistence.dao.base.*;
-import com.liaoyb.persistence.dao.custom.SongMapperCustom;
-import com.liaoyb.persistence.dao.custom.SonglistMapperCustom;
-import com.liaoyb.persistence.dao.custom.UserMapperCustom;
+import com.liaoyb.persistence.dao.custom.*;
 import com.liaoyb.persistence.domain.dto.*;
 import com.liaoyb.persistence.domain.vo.base.*;
 import com.liaoyb.persistence.domain.vo.custom.SongCustom;
@@ -34,7 +34,7 @@ import java.util.List;
  **/
 @Service
 public class UserServiceImpl implements UserService {
-    private static final String check = "^([a-z0-9A-Z]+[-|_|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+    private static final String emailCheck = "^([a-z0-9A-Z]+[-|_|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
 
     private static Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -67,6 +67,17 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private SonglistWithSongMapper songlistWithSongMapper;
+
+    @Autowired
+    private VisitRecordMapper visitRecordMapper;
+
+    @Autowired
+    private CommentMapperCustom commentMapperCustom;
+
+    @Autowired
+    private DynamicMapperCustom dynamicMapperCustom;
+    @Autowired
+    private MessMapperCustom messMapperCustom;
 
 
     @Override
@@ -196,7 +207,57 @@ public class UserServiceImpl implements UserService {
      * @return 用户
      */
     @Override
-    public UserDto userlogin(String email, String password) {
+    @Transactional
+    public UserDto userLogin(String email, String password,String ip) {
+        //验证用户名密码
+        UserDto user=verifyUserPassword(email,password);
+        if(user==null){
+            return null;
+        }
+        //更新用户状态,生成用户taken
+        user.setOnlineState(SysCode.USER_LOGIN_STATE.ONLINE);
+        user.setToken(UUIDUtil.getRandomStr());
+        //更新状态
+        userMapper.updateByPrimaryKeySelective(user);
+        //添加登录历史
+
+        addVisitRecord(user.getId(),ip,SysCode.VISIT_RECORD_TYPE.LOGIN,SysCode.VISIT_RECORD_PLATFORM.FRONT);
+
+        return user;
+    }
+
+    /**
+     * 用户退出
+     *
+     * @param userDto
+     * @param ip
+     */
+    @Override
+    @Transactional
+    public void userLogout(UserDto userDto, String ip) {
+        //添加访问历史
+        addVisitRecord(userDto.getId(),ip,SysCode.VISIT_RECORD_TYPE.LOGOUT,SysCode.VISIT_RECORD_PLATFORM.FRONT);
+    }
+
+    /**
+     * 查找用户UserDto
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public UserDto findUserDto(Long userId) {
+        return userMapperCustom.findUserDto(userId);
+    }
+
+
+    /**
+     * 验证用户密码
+     * @param email
+     * @param password
+     * @return
+     */
+    private UserDto verifyUserPassword(String email, String password){
         //对密码进行md5加密
         password= MD5Util.MD5(password);
         User user=new User();
@@ -205,6 +266,64 @@ public class UserServiceImpl implements UserService {
 
 
         return userMapperCustom.userLogin(user);
+    }
+
+    /**
+     * 管理员登录
+     * 不会生成token信息，也不会更新用户登录状态
+     *
+     * @param email
+     * @param password
+     * @return
+     */
+    @Override
+    public UserDto adminLogin(String email, String password,String ip) throws Exception {
+        //验证用户名密码
+        UserDto user=verifyUserPassword(email,password);
+        if(user==null){
+            return null;
+        }
+        //验证是否有管理员权限
+        if(user.getRoleType().contains(UserRoleTypeEnum.Admin.value())){
+            //添加登录历史
+            addVisitRecord(user.getId(),ip,SysCode.VISIT_RECORD_TYPE.LOGIN,SysCode.VISIT_RECORD_PLATFORM.BACKSTAGE);
+
+            return user;
+        }
+        //权限不足
+        throw new PermissionDeniedException();
+    }
+
+    /**
+     * 管理员退出
+     *
+     * @param userDto
+     * @param ip
+     */
+    @Override
+    @Transactional
+    public void adminLogout(UserDto userDto, String ip) {
+            //添加访问历史
+        addVisitRecord(userDto.getId(),ip,SysCode.VISIT_RECORD_TYPE.LOGOUT,SysCode.VISIT_RECORD_PLATFORM.BACKSTAGE);
+    }
+
+
+    /**
+     * 添加访问历史
+     * @param userId
+     * @param ip
+     * @param type
+     * @param platform
+     */
+    @Transactional
+    private void addVisitRecord(Long userId,String ip,Long type,Long platform){
+        VisitRecord visitRecord=new VisitRecord();
+        visitRecord.setUserId(userId);
+        visitRecord.setType(type);
+        visitRecord.setCreateTime(new Date().getTime());
+        visitRecord.setPlatform(platform);
+        visitRecord.setIp(ip);
+        visitRecordMapper.insertSelective(visitRecord);
     }
 
 
@@ -267,7 +386,7 @@ public class UserServiceImpl implements UserService {
         if(StringUtils.isEmpty(user.getEmail())||StringUtils.isEmpty(user.getPassword())){
             return new Response().failure("邮箱、密码不能为空");
         }
-        if(!user.getEmail().matches(check)){
+        if(!user.getEmail().matches(emailCheck)){
             return new Response().failure("邮箱格式有误");
         }
 
@@ -366,6 +485,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
+    @Transactional
     public boolean updateUser(User user) {
 
         //更新密码
@@ -373,6 +493,18 @@ public class UserServiceImpl implements UserService {
             user.setPassword(MD5Util.MD5(user.getPassword()));
         }
         userMapper.updateByPrimaryKeySelective(user);
+
+        //这里如果修改了昵称和头像的话，要把其他关联的表更新掉
+        //评论,动态，消息,歌单
+        // TODO: 2016/5/1
+
+        if(StringUtils.hasLength(user.getAvatarUrl())||StringUtils.hasLength(user.getName())){
+            //修改关联信息
+            commentMapperCustom.updateCommentWhenUserInfoUpdate(user);
+            dynamicMapperCustom.updateDynamicWhenUserInfoUpdate(user);
+            commentMapperCustom.updateCommentWhenUserInfoUpdate(user);
+            songlistMapperCustom.updateSonglistWhenUserInfoUpdate(user);
+        }
         return true;
     }
 
@@ -566,6 +698,7 @@ public class UserServiceImpl implements UserService {
         SonglistExample.Criteria criteria=songlistExample.createCriteria();
         criteria.andUserIdEqualTo(userId);
         criteria.andListNameEqualTo(SysCode.MUSIC_LIST.DEFAULT_LOVE);
+        criteria.andTypeEqualTo(SysCode.SONGLIST_TYPE.ILOVE);
         List<Songlist>songlists=songlistMapper.selectByExample(songlistExample);
         if(!CollectionUtil.isNotEmpty(songlists)){
             return null;

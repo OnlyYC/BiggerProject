@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" class="app">
+<head>
+    <meta charset="utf-8"/>
+    <title>AddMV</title>
+    <meta name="description"
+          content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/jPlayer/jplayer.flat.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/bootstrap.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/animate.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/font-awesome.min.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/simple-line-icons.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/font.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/css/app.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/cropper/cropper.min.css">
+
+
+    <link rel="stylesheet" href="{$baseUrl}/static/css/loading/ball-clip-rotate-multiple.css">
+
+
+    <script>
+        var baseUrl = '{$baseUrl}';
+    </script>
+</head>
+<body class="">
+
+
+<section class="vbox">
+
+    <!--上侧导航 up-->
+    <header class="bg-white-only header header-md navbar navbar-fixed-top-xs">
+        <div class="navbar-header aside bg-info ">
+            <a class="btn btn-link visible-xs" data-toggle="class:nav-off-screen,open" data-target="#nav,html">
+                <i class="icon-list"></i>
+            </a>
+            <a href="index.html" data-bjax class="navbar-brand text-lt">
+                <i class="icon-earphones"></i>
+                <span class="hidden-nav-xs m-l-sm">EDEN</span>
+            </a>
+            <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".user">
+                <i class="icon-settings"></i>
+            </a>
+        </div>
+        <ul class="nav navbar-nav hidden-xs">
+            <li>
+                <a href="#nav,.navbar-header" data-toggle="class:nav-xs,nav-xs" class="text-muted ">
+                    <i class="fa fa-indent text"></i>
+                    <i class="fa fa-dedent  text-active"></i>
+                </a>
+            </li>
+        </ul>
+        <form class="navbar-form navbar-left input-s-lg m-t m-l-n-xs hidden-xs" role="search">
+            <div class="form-group">
+                <div class="input-group">
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-sm bg-white btn-icon rounded"><i class="fa fa-search"></i></button>
+            </span>
+                    <input type="text" class="form-control input-sm no-border rounded"
+                           placeholder="Search songs, albums...">
+                </div>
+            </div>
+        </form>
+    </header>
+    <section>
+        <section class="hbox stretch">
+            <!-- .aside left 左边导航栏 -->
+            <aside class="bg-black dk  aside hidden-print" id="nav">
+                <section class="vbox">
+                    <section class="w-f-md scrollable">
+                        <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0"
+                             data-size="10px" data-railOpacity="0.2">
+
+
+                            <!-- nav -->
+                            <nav class="nav-primary hidden-xs">
+
+
+                                <ul class="nav bg clearfix">
+                                    <li>
+                                        <a href="/statistics" data-bjax>
+                                            <i class="icon-disc icon text-success"></i>
+                                            <span class="font-bold">数据统计</span>
+                                        </a>
+                                    </li>
+                                    <li class="m-b hidden-nav-xs"></li>
+                                </ul>
+
+                                <ul class="nav" data-ride="collapse">
+                                    <li>
+                                        <a href="javascript:void(0);" class="auto">
+                                            <span class="pull-right text-muted">
+                                              <i class="fa fa-angle-left text"></i>
+                                              <i class="fa fa-angle-down text-active"></i>
+                                            </span>
+                                            <i class="icon-grid icon">
+                                            </i>
+                                            <span>资源操作</span>
+                                        </a>
+                                        <ul class="nav dk text-sm">
+                                            <li>
+                                                <a href="/operation/song" data-bjax class="auto">
+                                                    <i class="fa fa-angle-right text-xs"></i>
+
+                                                    <span>音乐</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="/operation/mv" data-bjax class="auto">
+                                                    <i class="fa fa-angle-right text-xs"></i>
+
+                                                    <span>MV</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="/operation/artist" data-bjax class="auto">
+                                                    <i class="fa fa-angle-right text-xs"></i>
+
+                                                    <span>歌手</span>
+                                                </a>
+                                            </li>
+                                            <!--<li>-->
+                                            <!--<a href="layout-fluid.html" class="auto">-->
+                                            <!--<i class="fa fa-angle-right text-xs"></i>-->
+
+                                            <!--<span>歌单</span>-->
+                                            <!--</a>-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                            <!--<a href="layout-fluid.html" class="auto">-->
+                                            <!--<i class="fa fa-angle-right text-xs"></i>-->
+
+                                            <!--<span>榜单</span>-->
+                                            <!--</a>-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                            <!--<a href="layout-fluid.html" class="auto">-->
+                                            <!--<i class="fa fa-angle-right text-xs"></i>-->
+
+                                            <!--<span>用户</span>-->
+                                            <!--</a>-->
+                                            <!--</li>-->
+                                        </ul>
+                                    </li>
+
+
+                                    <li class="m-b hidden-nav-xs"></li>
+                                </ul>
+
+                                {foreach from=$currentUser.roleType item=roleType name=foo}
+                                {if $roleType eq 3}
+                                <ul class="nav" data-ride="collapse">
+                                    <li>
+                                        <a href="javascript:void(0);" class="auto">
+                                            <span class="pull-right text-muted">
+                                              <i class="fa fa-angle-left text"></i>
+                                              <i class="fa fa-angle-down text-active"></i>
+                                            </span>
+                                            <i class="icon-key icon">
+                                            </i>
+                                            <span>权限管理</span>
+                                        </a>
+                                        <ul class="nav dk text-sm">
+                                            <li>
+                                                <a href="layout-color.html" class="auto">
+                                                    <i class="fa fa-angle-right text-xs"></i>
+                                                    <b class="badge bg-primary pull-right">6</b>
+                                                    <span>处理申请</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="layout-boxed.html" class="auto">
+                                                    <i class="fa fa-angle-right text-xs"></i>
+
+                                                    <span>管理员</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="m-b hidden-nav-xs"></li>
+                                </ul>
+                                {/if}
+                                {/foreach}
+
+
+
+                            </nav>
+                            <!-- / nav -->
+                        </div>
+                    </section>
+                    <footer class="footer hidden-xs no-padder text-center-nav-xs">
+                        <div class="bg hidden-xs ">
+                            <div class="dropdown dropup wrapper-sm clearfix">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                  <span class="thumb-sm avatar pull-left m-l-xs">
+                                    <img src="{$currentUser.avatarUrl}" class="dker" alt="...">
+                                    <i class="on b-black"></i>
+                                  </span>
+                                  <span class="hidden-nav-xs clear">
+                                    <span class="block m-l">
+                                      <strong class="font-bold text-lt">{$currentUser.name}</strong>
+                                      <b class="caret"></b>
+                                    </span>
+                                  </span>
+                                </a>
+                                <ul class="dropdown-menu animated fadeInRight aside text-left">
+                                    <li>
+                                        <a href="javascript:void(0);" id="btn_logout">退出</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </footer>
+
+                </section>
+            </aside>
+
+            <!--中间内容 content -->
+            <section id="parContainer">
+                <section class="hbox stretch" id="content">
+
+                    {literal}
+                    <script>
+                        function init(){
+
+                            //选择视频
+                            $('#file_upload').uploadify({
+                                "buttonText":"选择视频文件",
+                                'swf'      : baseUrl+'/static/scripts/libs/uploadify/uploadify.swf',
+                                'uploader' : baseUrl+'/api/file/upload',
+                                'buttonClass':'m-l btn  btn-info',
+                                'fileSizeLimit':'140MB',
+                                'fileObjName' : 'file',
+                                'fileTypeDesc' : '视频',
+                                'fileTypeExts' : '*.mp4',
+                                'onUploadSuccess' : function(file, data, response) {
+                                    //date是返回数据
+                                    console.info("视频上传成功");
+                                    var result=jQuery.parseJSON(data);
+                                    console.info(result);
+                                    $("#songKey").val(result.data.key);
+                                    $("#fileName").text(result.data.originalFileName);
+
+                                }
+                            });
+
+
+
+
+                            $('#imgfile').bind('change',function(){
+
+                                //检验是否为图像文件
+                                var file = document.getElementById("imgfile").files[0];
+                                if(!/image\/\w+/.test(file.type)){
+                                    alert("需要一张图片！");
+                                    return false;
+                                }
+                                var reader = new FileReader();
+                                //将文件以Data URL形式读入页面
+                                reader.readAsDataURL(file);
+                                reader.onload=function(e){
+                                    //显示图片
+                                    $("#selec_img_prev").html('<img id="image" style="height: 300px;width: 100%"  src="'+this.result+'"/>');
+
+
+                                    $('#image').cropper({
+                                        aspectRatio: 16 / 9,
+                                        minCropBoxWidth:'250',
+                                        minCropBoxHeight:'250',
+                                        crop: function(e) {
+                                            // Output the result data for cropping image.
+                                        }
+                                    });
+
+                                };
+                            });
+
+
+
+
+                            $("#ImgClipOk").click(function(){
+
+                                var result=$('#image').cropper('getCroppedCanvas');
+
+                                //图片预览
+                                $("#prev_container").html('<img id="preview_img" class="img-full" style="height: 300px;width: 100%"  src="'+result.toDataURL()+'"/>');
+                                $("#download").attr('href', result.toDataURL());
+                                console.info($('#image').cropper('getCroppedCanvas').toBlob);
+
+                                var blob=dataURLtoBlob(result.toDataURL());
+                                console.info(blob);
+
+
+                                var formData = new FormData();
+                                formData.append('file', blob);
+                                //上传
+                                server.myfile.upload(formData,function(data){
+                                    //文件上传成功
+                                    console.info(data);
+                                    $("#coverKey").val(data.data.key);
+                                },function(data){
+                                    Alert.warning("截图上传失败")
+                                });
+
+                            });
+
+
+                            //提交按钮
+                            $("#add_song_submit_btn").click(function(){
+                                //表单数据
+
+                                var data=$("#add_song_form").serializeObject();
+//                                var data = $("#add_song_form").serialize();
+                                console.info(data);
+
+                                //校验,图片是否裁剪过了
+                                if($.trim(data.coverKey)==''){
+                                    Alert.warning("图片还没有添加或者裁剪");
+                                    return;
+                                }
+                                //音频是否上传过了
+                                if($.trim(data.songKey)==''){
+                                    Alert.warning("视频文件还没有添加");
+                                    return;
+                                }
+                                if($.trim(data.name)==''|| $.trim(data.time)==''||$.trim(data.info)==''){
+                                    Alert.warning("请补充完信息");
+                                    return;
+                                }
+                                //提交
+                                console.info(data);
+
+                                server.resource.addMV(data,function(data){
+                                    Alert.success("MV添加成功");
+                                    setTimeout(function(){
+                                        //跳转到歌曲统计页面
+                                        var url=baseUrl+'/operation/mv';
+                                        $(this).bjax({url: url});
+                                    },1000)
+                                },function(data){
+                                    Alert.warning(data.message);
+                                })
+
+                            });
+
+
+                        }
+                    </script>
+                    {/literal}
+                    <section class="vbox">
+
+                        <section class="scrollable padder-lg panel panel-default" >
+                            <div>
+                                <h1 class="text-info">添加MV</h1>
+                            </div>
+                            <div>
+                                <div class=" b-a b-info padder-v">
+                                    <div class="">
+                                        <input type="file" name="file_upload" id="file_upload" class="btn-lg" />
+                                    </div>
+
+
+                                    <div class="m-l">
+                                        <span class="h3" id="fileName"></span>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                                <div class="m-t-lg">
+                                    <div class="col-md-6 col-sm-6 b-a  b-dark" style="height: 500px;">
+                                        <span class="h3 center block m-t">图片裁剪</span>
+                                        <div class="m-t">
+                                            <label id="selectImg" for="imgfile" class="btn btn-info">选择本地图片</label>
+
+                                            <button id="ImgClipOk" class="btn btn-info">完成图片裁剪</button>
+                                            <div id="hide_file_input">
+                                                <input id="imgfile" type="file"  style="display:none;" />
+                                            </div>
+                                        </div>
+                                        <div class="m-t text-center" id="selec_img_prev">
+                                            <img id="image" style="height: 300px;margin: auto"  />
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 b-a  b-dark" style="height: 500px;">
+                                        <span class="h3 center block m-t">裁剪预览</span>
+                                        <div class="m-t">
+                                            <a id="download" href="javascript:void(0);" class="btn  btn-info" download="裁剪.png">下载该预览</a>
+                                        </div>
+                                        <div id="prev_container" class="m-t" style="height: 400px;width: 100%">
+                                            <canvas id="preview_img" style="height: 300px;width: 100%"  />
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="clearfix"></div>
+
+                            </div>
+                            <form id="add_song_form" role="form" class="m-t-lg">
+                                <!--上传文件的key-->
+                                <input type="hidden" id="coverKey" name="coverKey" value="">
+                                <input type="hidden" id="songKey" name="songKey" value="">
+                                <div class="form-group">
+                                    <label class="text-info">名称</label>
+                                    <input name="name" type="text" class="form-control" placeholder="输入名称">
+                                </div>
+                                <div class="form-group">
+                                    <label class="text-info">MV时长(秒)</label>
+                                    <input name="time" type="number" class="form-control" placeholder="输入MV时长">
+                                </div>
+                                <!--<div class="checkbox checkbox-primary">-->
+                                    <!--<input id="pure_check" name="pure" class="styled" type="checkbox" >-->
+                                    <!--<label for="pure_check" class="text-info">-->
+                                        <!--是否为纯音乐-->
+                                    <!--</label>-->
+                                <!--</div>-->
+                                <div class="form-group m-t">
+                                    <label class="text-info">简介</label>
+                                    <textarea rows="5" class="form-control" name="info" placeholder="输入简介"></textarea>
+                                </div>
+                            </form>
+                            <div>
+                                <button class="btn btn-lg btn-info" id="add_song_submit_btn">提交</button>
+                            </div>
+
+                        </section>
+
+                    </section>
+
+
+                </section>
+
+                <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen,open"
+                   data-target="#nav,html"></a>
+            </section>
+
+        </section>
+    </section>
+
+</section>
+<script src="{$baseUrl}/static/scripts/libs/jquery.min.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jquery-jtemplates.js"></script>
+<!-- Bootstrap -->
+<script src="{$baseUrl}/static/scripts/libs/bootstrap.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/slimscroll/jquery.slimscroll.min.js"></script>
+<!--bootstrap-paginator-->
+
+<script src="{$baseUrl}/static/scripts/libs/bootstrap-paginator/bootstrap-paginator.js"></script>
+<!--jplayer-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/jquery.jplayer.min.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/add-on/jplayer.playlist.min.js"></script>
+<!-- datatables -->
+<script src="{$baseUrl}/static/scripts/libs/datatables/jquery.dataTables.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.js"></script>
+<!--notice-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/notice/notie.js"></script>
+<!--template-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/artTemplate/template.js"></script>
+
+<!-- Flot -->
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.tooltip.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.resize.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.orderBars.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.pie.min.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.grow.js"></script>
+<script src="{$baseUrl}/static/scripts/libs/charts/flot/jquery.flot.time.js"></script>
+
+<!--上传插件-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/uploadify/jquery.uploadify.min.js"></script>
+<!--图片裁剪-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/cropper/cropper.min.js"></script>
+<!-- App -->
+<script src="{$baseUrl}/static/scripts/common/app.js"></script>
+<script src="{$baseUrl}/static/scripts/common/app.plugin.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jPlayer/my_player.js"></script>
+
+<script type="text/javascript" src="{$baseUrl}/static/scripts/common/common.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/dao/dao.js"></script>
+<script type="text/javascript" src="{$baseUrl}/static/scripts/app/service/server.js"></script>
+<script>
+    init();
+</script>
+
+
+</body>
+</html>

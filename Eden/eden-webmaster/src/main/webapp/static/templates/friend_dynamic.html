@@ -1,0 +1,53 @@
+{#foreach $T as record}
+<div class="b-a b-light  m-md">
+    <div class="m-t">
+        <button data-target="{$T.record.userId}" data-collecttype="5" class="btn btn-default  pull-right btnAddToCollect">
+            <i class="icon-plus icon"></i>
+            关注
+        </button>
+        <span class="pull-left thumb avatar m-r">
+            <img src="{$T.record.userAvatarUrl}">
+        </span>
+        <span class="clear">
+            <span>{$T.record.username}</span>
+            <small class="text-muted clear text-ellipsis">{fmtDate($T.record.date,'yyyy-MM-dd hh:mm')}</small>
+        </span>
+        <div class="clearfix"></div>
+    </div>
+    <div class="m-l-xl">
+        <!--动态内容-->
+        <div>
+            {$T.record.content}
+        </div>
+        <div>
+            <div class="pull-right handle">
+                <span class="click">
+                    <i class="icon-like icon"></i>
+                    ({$T.record.praiseCount})
+                </span>
+                <span class="click dy_comment"  data-param="{$T.record.id}" data-target="#dynamic_comment_{$T.record$index}">
+                    评论(<span id="comCount_{$T.record.id}">{$T.record.commentCount}</span>)
+                </span>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <!--动态  评论-->
+        <div class="bg-light" style="display: none;" id="dynamic_comment_{$T.record$index}">
+            <div class="b-a b-light">
+                <textarea class="form-control" rows="2" id="textarea_comment_{$T.record.id}"></textarea>
+                <div class="m-t m-xs">
+                    <button data-belong="{$T.record.id}" data-type="3" data-comment_container="#comment_container_{$T.record$index}" data-tar_input="#textarea_comment_{$T.record.id}" class="btn btn-xs btn-default pull-right btnSubmitComment">发表评论</button>
+                    <div class="clearfix"></div>
+                </div>
+
+            </div>
+            <div data-comcount="#comCount_{$T.record.id}" class="coments_for_dynamic my_comment_container" id="comment_container_{$T.record$index}">
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{#/for}

@@ -1250,7 +1250,15 @@ Date.now = Date.now || function () {
                Alert.warning('不能创建【我喜欢】歌单');
            }else{
                //新建歌单
-               server.user.newSonglist(listName);
+               server.user.newSonglist(listName,function(data){
+                   Alert.success("新建歌单成功");
+                   setTimeout(function(){
+                       //刷新页面
+                       window.location.reload();
+                   },1000);
+
+               });
+
            }
         });
 
@@ -1361,6 +1369,92 @@ Date.now = Date.now || function () {
     //全部设置为已读
     $("#read_all").click(function(){
         readAll();
+    });
+
+
+
+    //下载音乐
+    $("body").delegate(".song_download","click",function(){
+
+        var song_id=$(this).data('song_id');
+        server.song.download(song_id);
+
+    });
+
+    //赞动态
+    $("body").delegate(".praise_dynamic","click",function(){
+
+
+        var dynamic_id=$(this).data('dynamic_id');
+
+        var currentTime=new Date().getTime();
+        var lastPriseTime=$(this).data("lastPriseTime");
+        if(lastPriseTime&&((currentTime-lastPriseTime)<1000*60*5)){
+            //
+            Alert.warning("你刚赞了该动态,请等会儿再试");
+            return;
+        }
+        $(this).data("lastPriseTime",currentTime);
+        var that=$(this);
+        server.user.praiseDynamic(dynamic_id,function(data){
+            var praiseCount=$(that.find(".praiseCount").get(0));
+            var $v=parseInt(praiseCount.text());
+            praiseCount.text($v+1);
+        });
+
+    });
+
+    //从歌单中移除歌曲
+    $("body").delegate(".remove-from-songlist","click",function(){
+        var songId=$(this).data('song_id');
+        var songlistId=$(this).data('songlist_id');
+        //
+        Alert.confirm("是否要移除此歌曲",function(){
+            server.songlist.removeSongFromSonglist(songId,songlistId,function(data){
+                Alert.success("移除成功");
+                setTimeout(function(){
+                    //成功后，刷新当前页面
+                    window.location.reload();
+                },500);
+
+            });
+        })
+
+    });
+
+
+    //删除歌单dealMySonglist
+    $("body").delegate(".deal-songlist","click",function(){
+        var songlistId=$(this).data('songlist_id');
+
+        //对话框
+        Alert.confirm("是否要删除此歌单",function(){
+            server.songlist.dealMySonglist(songlistId,function(data){
+                Alert.success("歌单删除成功");
+                setTimeout(function(){
+                    //返回个人中心
+                    var url=baseUrl+'/userHome/'+currentUserId;
+                    $(this).bjax({url: url});
+                },500);
+            })
+        });
+
+
+
+    });
+
+    //点击按钮发送私信
+    $("body").delegate(".iwant-send-mess-btn","click",function(){
+        var toUser=$(this).data('to_user');
+        var messType=$(this).data('mess_type');
+
+        //弹出输入框
+        Alert.input("请输入私信的内容",function(text){
+           //发送
+            server.user.sendMess(toUser,text,messType,function(data){
+                Alert.success("私信发送成功");
+            })
+        });
     });
 
 
@@ -1644,6 +1738,12 @@ function job(){
 
 
     },1000*60);
+}
+
+
+function reloadShare(){
+    _bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};
+    $.getScript("http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='"+~(-new Date()/36e5));
 }
 
 

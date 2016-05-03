@@ -1,6 +1,7 @@
 package com.liaoyb.persistence.dao.custom;
 
 import com.liaoyb.persistence.domain.vo.base.Comment;
+import com.liaoyb.persistence.domain.vo.base.User;
 import com.liaoyb.persistence.domain.vo.custom.CommentCustom;
 import org.apache.ibatis.annotations.Param;
 
@@ -40,6 +41,14 @@ public interface CommentMapperCustom {
      * @param commentId
      */
     int praiseComment(@Param("commentId") Long commentId);
+
+
+    /**
+     * 当用户信息改变时，修改评论的相关信息
+     * @param user
+     * @return
+     */
+    int updateCommentWhenUserInfoUpdate(@Param("user") User user);
 
 
 }

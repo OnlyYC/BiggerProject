@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="{$baseUrl}/static/css/font.css" type="text/css"/>
     <link rel="stylesheet" href="{$baseUrl}/static/css/app.css" type="text/css"/>
     <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.css" type="text/css"/>
+    <!--图片裁剪-->
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/cropper/cropper.min.css">
 
 
     <link rel="stylesheet" href="{$baseUrl}/static/css/loading/ball-clip-rotate-multiple.css">
@@ -20,8 +22,52 @@
     <script>
         var baseUrl = '{$baseUrl}';
     </script>
+    {literal}
+
+    <script id="mess_common" type="text/html" >
+
+        <span  class="media list-group-item mess" data-time="{{date}}" data-id="{{id}}">
+            <a href="/userHome/{{fromUser}}" data-bjax class="pull-left thumb-sm">
+                <img src="{{fromUserAvatar}}" alt="..." class="img-circle">
+            </a>
+            <span class="pull-right h3 click notClose removeMess">
+                &times;
+            </span>
+            <span class="media-body block m-b-none">
+              <div>{{#content}}</div>
+              <small class="text-muted">{{date | fmtDate:'yyyy-MM-dd hh:mm'}}</small>
+            </span>
+
+            <div class="clearfix"></div>
+        </span>
+
+    </script>
+
+    <script id="mess_notice" type="text/html">
+
+        <span  class="media list-group-item mess" data-time="{{date}}" data-id="{{id}}">
+            <span class="pull-left thumb-sm text-center">
+                <i class="fa fa-envelope-o fa-2x text-success"></i>
+            </span>
+            <span class="pull-right h3 click notClose removeMess">
+                &times;
+            </span>
+            <span class="media-body block m-b-none">
+                <span class="text-ellipsis text-xs text-muted">{{#content}}</span>
+                <small class="text-muted">{{date | fmtDate:'yyyy-MM-dd hh:mm'}}</small>
+            </span>
+            <div class="clearfix"></div>
+        </span>
+
+    </script>
+    {/literal}
 </head>
 <body class="">
+<!--添加歌曲到歌单,模态框-->
+<div class="modal fade" id="mysonglist_modal" >
+
+</div>
+
 
 <!--登录、注册弹窗-->
 <div class="modal fade login" id="loginModal">
@@ -50,7 +96,7 @@
                                 <input  class="form-control" type="text" placeholder="Email" name="email">
                                 <input  class="form-control" type="password" placeholder="Password" name="password">
                             </form>
-                            <button class="btn btn-default btn-login"   onclick="loginAjax()">Login</button>
+                            <button class="btn btn-default btn-login" id="login_btn"   >Login</button>
                         </div>
                     </div>
                 </div>
@@ -65,7 +111,7 @@
                                 <input name="code" class="form-control" type="text" placeholder="code">
 
                             </form>
-                            <button class="btn btn-default btn-register m-t" id="register_submit_btn" disabled >Create account</button>
+                            <button class="btn btn-default btn-register m-t" id="register_submit_btn"  >Create account</button>
                         </div>
                     </div>
                 </div>
@@ -84,6 +130,7 @@
         </div>
     </div>
 </div>
+
 <section class="vbox">
 
     <!--上侧导航 up-->
@@ -92,71 +139,61 @@
             <a class="btn btn-link visible-xs" data-toggle="class:nav-off-screen,open" data-target="#nav,html">
                 <i class="icon-list"></i>
             </a>
-            <a href="index.html" data-bjax class="navbar-brand text-lt">
+            <a href="/" data-bjax class="navbar-brand text-lt">
                 <i class="icon-earphones"></i>
-                <img src="images/logo.png" alt="." class="hide">
                 <span class="hidden-nav-xs m-l-sm">EDEN</span>
             </a>
             <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".user">
                 <i class="icon-settings"></i>
             </a>
-        </div>      <ul class="nav navbar-nav hidden-xs">
-        <li>
-            <a href="#nav,.navbar-header" data-toggle="class:nav-xs,nav-xs" class="text-muted">
-                <i class="fa fa-indent text"></i>
-                <i class="fa fa-dedent text-active"></i>
-            </a>
-        </li>
-    </ul>
-        <form class="navbar-form navbar-left input-s-lg m-t m-l-n-xs hidden-xs" role="search">
+        </div>
+        <ul class="nav navbar-nav hidden-xs">
+            <li>
+                <a href="#nav,.navbar-header" data-toggle="class:nav-xs,nav-xs" class="text-muted">
+                    <i class="fa fa-indent text"></i>
+                    <i class="fa fa-dedent text-active"></i>
+                </a>
+            </li>
+        </ul>
+        <div class="navbar-form navbar-left input-s-lg m-t m-l-n-xs hidden-xs" role="search">
             <div class="form-group">
                 <div class="input-group">
-            <span class="input-group-btn">
-              <button type="submit" class="btn btn-sm bg-white btn-icon rounded"><i class="fa fa-search"></i></button>
-            </span>
-                    <input type="text" class="form-control input-sm no-border rounded" placeholder="Search songs, albums...">
+                    <span class="input-group-btn">
+                      <span id="search_btn"  class="btn btn-sm bg-white btn-icon rounded"><i class="fa fa-search"></i></span>
+                    </span>
+                    <input type="text" id="search" class="form-control input-sm no-border rounded"
+                           placeholder="Search songs, albums...">
                 </div>
             </div>
-        </form>
+        </div>
         <div class="navbar-right ">
             <ul class="nav navbar-nav m-n hidden-xs nav-user user">
-                <li class="hidden-xs">
-                    <a href="#" class="dropdown-toggle lt" data-toggle="dropdown">
+                <!--用户已登录-->
+                {if $currentUser}
+                <!--消息-->
+                <li class="hidden-xs ">
+                    <a href="javascript:void(0);" class="dropdown-toggle lt " data-toggle="dropdown">
                         <i class="icon-bell"></i>
-                        <span class="badge badge-sm up bg-danger count">2</span>
+                        <span class="badge badge-sm up bg-danger count ">0</span>
                     </a>
                     <section class="dropdown-menu aside-xl animated fadeInUp">
                         <section class="panel bg-white">
-                            <div class="panel-heading b-light bg-light">
-                                <strong>You have <span class="count">2</span> notifications</strong>
+                            <div class="panel-heading b-light bg-light notClose">
+                                <strong>你有 <span class="count " >0</span>封提醒</strong>
                             </div>
-                            <div class="list-group list-group-alt">
-                                <a href="#" class="media list-group-item">
-                    <span class="pull-left thumb-sm">
-                      <img src="images/a0.png" alt="..." class="img-circle">
-                    </span>
-                    <span class="media-body block m-b-none">
-                      Use awesome animate.css<br>
-                      <small class="text-muted">10 minutes ago</small>
-                    </span>
-                                </a>
-                                <a href="#" class="media list-group-item">
-                    <span class="media-body block m-b-none">
-                      1.0 initial released<br>
-                      <small class="text-muted">1 hour ago</small>
-                    </span>
-                                </a>
+                            <div class="list-group list-group-alt scrollable notClose" id="user_mess_group" style="height: 300px">
+
                             </div>
-                            <div class="panel-footer text-sm">
-                                <a href="#" class="pull-right"><i class="fa fa-cog"></i></a>
-                                <a href="#notes" data-toggle="class:show animated fadeInRight">See all the notifications</a>
+                            <div class="panel-footer text-sm notClose">
+                                <span  id="btn_show_more_mess" class="click pull-right notClose" >显示更多</span>
+                                <span id="read_all"  class="click pull-left notClose">全部标记为已读</span>
                             </div>
                         </section>
                     </section>
                 </li>
 
-                <!--用户已登录-->
-                {if $currentUser}
+
+                <!--用户-->
                 <li class=" dropdown">
                     <a href="javascript:void(0);" class="dropdown-toggle bg clear" data-toggle="dropdown">
                         <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
@@ -167,23 +204,11 @@
                     <ul class="dropdown-menu animated fadeInRight">
                         <li>
                             <span class="arrow top"></span>
-                            <a href="listen.html">Settings</a>
-                        </li>
-                        <li>
-                            <a href="profile.html">Profile</a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <span class="badge bg-danger pull-right">3</span>
-                                Notifications
-                            </a>
-                        </li>
-                        <li>
-                            <a href="docs.html">Help</a>
+                            <a href="/userHome/{$currentUser.id}" data-bjax>个人主页</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="modal.lockme.html" data-toggle="ajaxModal">Logout</a>
+                            <a href="javascript:void(0);" id="btn_logout">注销</a>
                         </li>
                     </ul>
                 </li>
@@ -206,6 +231,7 @@
                     </ul>
                 </li>
                 {/if}
+
             </ul>
         </div>
     </header>
@@ -214,9 +240,9 @@
             <!-- .aside left 左边导航栏 -->
             <aside class="bg-black dk nav-xs aside hidden-print" id="nav">
                 <section class="vbox">
-                    <section class="w-f-md scrollable">
-                        <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="10px" data-railOpacity="0.2">
-
+                    <section class="w-f-md scrollable" >
+                        <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0"
+                             data-size="10px" data-railOpacity="0.2">
 
 
                             <!-- nav -->
@@ -245,7 +271,7 @@
                                         Mine
                                     </li>
                                     <li>
-                                        <a href="events.html">
+                                        <a href="/friend" data-bjax>
                                             <i class="icon-users icon"></i>
                                             <span class="font-bold">朋友</span>
                                         </a>
@@ -259,17 +285,15 @@
                                     <li>
                                         <a href="/myMV" data-bjax>
                                             <i class="icon-film icon"></i>
-                                            <!--<b class="badge bg-primary pull-right">6</b>-->
                                             <span class="font-bold">我的MV</span>
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="/myUpload" data-bjax>
-                                            <i class="icon-cloud-upload icon"></i>
-                                            <!--<b class="badge bg-primary pull-right">6</b>-->
-                                            <span class="font-bold">我的上传</span>
-                                        </a>
-                                    </li>
+                                    <!--<li>-->
+                                    <!--<a href="/myUpload" data-bjax>-->
+                                    <!--<i class="icon-cloud-upload icon"></i>-->
+                                    <!--<span class="font-bold">我的上传</span>-->
+                                    <!--</a>-->
+                                    <!--</li>-->
 
                                 </ul>
                             </nav>
@@ -286,8 +310,8 @@
 
                     <script>
                         var songlist={$songlistJson};
+
                         console.info(songlist);
-                        var draw=0;
                         //初始化
                         var table=null;
                         var allData=null;
@@ -305,9 +329,8 @@
                             //歌单中的音乐，表格
                             table = $('#example').dataTable({
                                 "ajax": {
-                                    url: baseUrl + '/api/songlist/findSongDtoInSonglist',
+                                    url: baseUrl+'/api/songlist/findSongDtoInSonglist',
                                     dataSrc: function (json) {
-                                        json.draw = draw++;
                                         json.recordsTotal = json.data.total;
                                         json.recordsFiltered = json.data.total;
                                         allData = json.data.rows;
@@ -322,7 +345,7 @@
                                 },
                                 "info":false,//左下的提示
                                 "lengthChange":false,//不显示设置每页多少的
-                                //"processing":true,
+                                "processing":true,
                                 "autoWidth": false,
                                 "serverSide": true,
                                 "ordering": false,
@@ -351,7 +374,7 @@
                                                         '<i class="fa fa-heart text  text-danger"></i>' +
                                                         '</span>';
                                             }
-                                            return result + '<a href="#" class="m-l">' +
+                                            return result + '<a href="javascript:void(0);"  class="m-l song_download" data-song_id=\"'+full.song_id+'\">'  +
                                                     '<span class="icon icon-arrow-down"></span>' +
                                                     '</a>';
                                         }
@@ -389,7 +412,7 @@
                                         "render": function (data, type, full, meta) {
                                             var result = "";
                                             if (data) {
-                                                result = "<a href='/album/" + full.albumId + "data-bjax>" + data + "</a>";
+                                                result = "<a href='/album/" + full.albumId + "' data-bjax>" + data + "</a>";
                                             }
                                             return result;
                                         }
@@ -404,6 +427,16 @@
                                             return "";
                                         }
                                     }
+                                    {if  $songlist.userOwn eq 1}
+                                     ,{
+                                        "data":null,
+                                        "render": function (data, type, full, meta) {
+                                            return "<span class='click remove-from-songlist fa fa-times-circle-o' data-song_id='"+full.song_id+"' data-songlist_id='"+songlist.id+"'>";
+                                        }
+                                    }
+                                    {/if}
+
+
                                 ],
                                 initComplete : function() {//表格完成时运行函数
 
@@ -455,18 +488,7 @@
                         }
 
 
-                        //播放所有,会移除原来的播放列表
-                        function songlist_playAll(){
-                            //只会响应一次，其他点击会提示
 
-                            //先拿到歌单中所有音乐的数据
-                            console.info(allData);
-                        }
-
-                        //添加到播放列表，添加到后面
-                        function songlist_addToPlaylist(){
-
-                        }
 
                     </script>
 
@@ -483,16 +505,28 @@
                                     <span>
                                         <span class="bg-danger m-r">歌单</span>
                                         <span class="h3">{$songlist.listName}</span>
+
+
                                     </span>
                                     <span class="pull-right text-muted m-l  ">
-                                        <span class="fa fa-play-circle-o h4" id="songlist_playcount"></span>
+                                        {if  $songlist.userOwn eq 1 and $songlist.type eq 1}
+                                        <!--修改按钮-->
+                                         <a href="/updateSonglist/{$songlist.id}" data-bjax class="h3 text-muted m-l  icon-settings "></a>
+                                        {/if}
+
+                                        {if  $songlist.userOwn eq 1 and $songlist.type eq 1}
+                                        <!--删除按钮-->
+                                         <span  data-songlist_id="{$songlist.id}"  class="h3 text-muted m-l click  fa fa-times-circle-o deal-songlist"></span>
+                                        {/if}
+
+                                        <span class="m-l-lg fa fa-play-circle-o h4" id="songlist_playcount"></span>
                                     </span>
                                       {if $songlist.userId}
                                     <div class="b-t  b-light m-t ">
                                         <span class="avatar thumb-xs">
                                             <img src="{$songlist.userAvatar}"/>
                                         </span>
-                                        <a href="#">{$songlist.username}</a>
+                                        <a data-bjax href="/userHome/{$songlist.userId}">{$songlist.username}</a>
                                         {assign var="createTime" value=$songlist.createTime}
                                         <span class="padder"><span id="createTime"></span>创建 </span>
                                     </div>
@@ -500,13 +534,12 @@
 
                                     <div class="m-t">
                                         <div class="btn-group">
-                                            <button class="btn btn-default" onclick="songlist_playAll()">
+                                            <button class="btn btn-default songlist_play" data-songlistid="{$songlist.id}">
                                                 <span class="fa fa-play-circle-o text-danger h4"></span>
                                                 <span>播放全部</span>
                                             </button>
-                                            <button class="btn btn-default" onclick="songlist_addToPlaylist()">
-                                                <span>+</span>
-                                            </button>
+
+
                                         </div>
                                         <!--如果是当前用户，没有收藏这个按钮-->
                                         {if  $songlist.userOwn eq 0}
@@ -515,11 +548,10 @@
                                             收藏({$songlist.collectCount})
                                         </button>
                                         {/if}
-
-                                        <button class="btn btn-default">
-                                            <span class="fa fa-share-square-o"></span>
-                                            分享
-                                        </button>
+                                        <!--<button class="btn btn-default">-->
+                                            <!--<span class="fa fa-share-square-o"></span>-->
+                                            <!--分享-->
+                                        <!--</button>-->
 
                                     </div>
                                     <div>
@@ -568,8 +600,14 @@
                                             <th  style="width:10%">操作</th>
                                             <th  style="width:25%">音乐标题</th>
                                             <th  style="width:25%">歌手</th>
-                                            <th  style="width:25%">专辑</th>
+                                            <th  style="width:20%">专辑</th>
                                             <th  style="width:10%">时长</th>
+
+                                            <!--当歌曲是用户自己的时候-->
+                                            {if  $songlist.userOwn eq 1}
+                                            <th  style="width: 5%">移除</th>
+                                            {/if}
+
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -608,7 +646,9 @@
 
 
                         </section>
-
+                        <!--分享-->
+                        <script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/button.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script>
+                        <script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
                     </section>
 
 
@@ -693,6 +733,7 @@
 </section>
 
 <script src="{$baseUrl}/static/scripts/libs/jquery.min.js"></script>
+
 <script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jquery-jtemplates.js"></script>
 <!-- Bootstrap -->
 <script src="{$baseUrl}/static/scripts/libs/bootstrap.js"></script>
@@ -708,6 +749,10 @@
 <script src="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.js"></script>
 <!--notice-->
 <script type="text/javascript" src="{$baseUrl}/static/scripts/libs/notice/notie.js"></script>
+<!--template-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/artTemplate/template.js"></script>
+<!--图片裁剪-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/cropper/cropper.min.js"></script>
 <!-- App -->
 <script src="{$baseUrl}/static/scripts/common/app.js"></script>
 <script src="{$baseUrl}/static/scripts/common/app.plugin.js"></script>
@@ -721,6 +766,10 @@
 
 <script>
     init();
+    $(function(){
+        initUserMess();
+        job();
+    })
 </script>
 
 </body>

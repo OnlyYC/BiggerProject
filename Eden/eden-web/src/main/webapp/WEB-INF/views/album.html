@@ -13,15 +13,61 @@
     <link rel="stylesheet" href="{$baseUrl}/static/css/font.css" type="text/css"/>
     <link rel="stylesheet" href="{$baseUrl}/static/css/app.css" type="text/css"/>
     <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.css" type="text/css"/>
+    <!--图片裁剪-->
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/cropper/cropper.min.css">
 
 
     <link rel="stylesheet" href="{$baseUrl}/static/css/loading/ball-clip-rotate-multiple.css">
 
     <script>
         var baseUrl = '{$baseUrl}';
+
     </script>
+    {literal}
+    <script id="mess_common" type="text/html" >
+
+        <span  class="media list-group-item mess" data-time="{{date}}" data-id="{{id}}">
+            <a href="/userHome/{{fromUser}}" data-bjax class="pull-left thumb-sm">
+                <img src="{{fromUserAvatar}}" alt="..." class="img-circle">
+            </a>
+            <span class="pull-right h3 click notClose removeMess">
+                &times;
+            </span>
+            <span class="media-body block m-b-none">
+              <div>{{#content}}</div>
+              <small class="text-muted">{{date | fmtDate:'yyyy-MM-dd hh:mm'}}</small>
+            </span>
+
+            <div class="clearfix"></div>
+        </span>
+
+    </script>
+
+    <script id="mess_notice" type="text/html">
+
+        <span  class="media list-group-item mess" data-time="{{date}}" data-id="{{id}}">
+            <span class="pull-left thumb-sm text-center">
+                <i class="fa fa-envelope-o fa-2x text-success"></i>
+            </span>
+            <span class="pull-right h3 click notClose removeMess">
+                &times;
+            </span>
+            <span class="media-body block m-b-none">
+                <span class="text-ellipsis text-xs text-muted">{{#content}}</span>
+                <small class="text-muted">{{date | fmtDate:'yyyy-MM-dd hh:mm'}}</small>
+            </span>
+            <div class="clearfix"></div>
+        </span>
+
+    </script>
+    {/literal}
 </head>
 <body class="">
+<!--添加歌曲到歌单,模态框-->
+<div class="modal fade" id="mysonglist_modal" >
+
+</div>
+
 
 <!--登录、注册弹窗-->
 <div class="modal fade login" id="loginModal">
@@ -50,7 +96,7 @@
                                 <input  class="form-control" type="text" placeholder="Email" name="email">
                                 <input  class="form-control" type="password" placeholder="Password" name="password">
                             </form>
-                            <button class="btn btn-default btn-login"   onclick="loginAjax()">Login</button>
+                            <button class="btn btn-default btn-login" id="login_btn"   >Login</button>
                         </div>
                     </div>
                 </div>
@@ -65,7 +111,7 @@
                                 <input name="code" class="form-control" type="text" placeholder="code">
 
                             </form>
-                            <button class="btn btn-default btn-register m-t" id="register_submit_btn" disabled >Create account</button>
+                            <button class="btn btn-default btn-register m-t" id="register_submit_btn"  >Create account</button>
                         </div>
                     </div>
                 </div>
@@ -84,6 +130,7 @@
         </div>
     </div>
 </div>
+
 <section class="vbox">
 
     <!--上侧导航 up-->
@@ -92,71 +139,61 @@
             <a class="btn btn-link visible-xs" data-toggle="class:nav-off-screen,open" data-target="#nav,html">
                 <i class="icon-list"></i>
             </a>
-            <a href="index.html" data-bjax class="navbar-brand text-lt">
+            <a href="/" data-bjax class="navbar-brand text-lt">
                 <i class="icon-earphones"></i>
-                <img src="images/logo.png" alt="." class="hide">
                 <span class="hidden-nav-xs m-l-sm">EDEN</span>
             </a>
             <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".user">
                 <i class="icon-settings"></i>
             </a>
-        </div>      <ul class="nav navbar-nav hidden-xs">
-        <li>
-            <a href="#nav,.navbar-header" data-toggle="class:nav-xs,nav-xs" class="text-muted">
-                <i class="fa fa-indent text"></i>
-                <i class="fa fa-dedent text-active"></i>
-            </a>
-        </li>
-    </ul>
-        <form class="navbar-form navbar-left input-s-lg m-t m-l-n-xs hidden-xs" role="search">
+        </div>
+        <ul class="nav navbar-nav hidden-xs">
+            <li>
+                <a href="#nav,.navbar-header" data-toggle="class:nav-xs,nav-xs" class="text-muted">
+                    <i class="fa fa-indent text"></i>
+                    <i class="fa fa-dedent text-active"></i>
+                </a>
+            </li>
+        </ul>
+        <div class="navbar-form navbar-left input-s-lg m-t m-l-n-xs hidden-xs" role="search">
             <div class="form-group">
                 <div class="input-group">
-            <span class="input-group-btn">
-              <button type="submit" class="btn btn-sm bg-white btn-icon rounded"><i class="fa fa-search"></i></button>
-            </span>
-                    <input type="text" class="form-control input-sm no-border rounded" placeholder="Search songs, albums...">
+                    <span class="input-group-btn">
+                      <span id="search_btn"  class="btn btn-sm bg-white btn-icon rounded"><i class="fa fa-search"></i></span>
+                    </span>
+                    <input type="text" id="search" class="form-control input-sm no-border rounded"
+                           placeholder="Search songs, albums...">
                 </div>
             </div>
-        </form>
+        </div>
         <div class="navbar-right ">
             <ul class="nav navbar-nav m-n hidden-xs nav-user user">
-                <li class="hidden-xs">
-                    <a href="#" class="dropdown-toggle lt" data-toggle="dropdown">
+                <!--用户已登录-->
+                {if $currentUser}
+                <!--消息-->
+                <li class="hidden-xs ">
+                    <a href="javascript:void(0);" class="dropdown-toggle lt " data-toggle="dropdown">
                         <i class="icon-bell"></i>
-                        <span class="badge badge-sm up bg-danger count">2</span>
+                        <span class="badge badge-sm up bg-danger count ">0</span>
                     </a>
                     <section class="dropdown-menu aside-xl animated fadeInUp">
                         <section class="panel bg-white">
-                            <div class="panel-heading b-light bg-light">
-                                <strong>You have <span class="count">2</span> notifications</strong>
+                            <div class="panel-heading b-light bg-light notClose">
+                                <strong>你有 <span class="count " >0</span>封提醒</strong>
                             </div>
-                            <div class="list-group list-group-alt">
-                                <a href="#" class="media list-group-item">
-                    <span class="pull-left thumb-sm">
-                      <img src="images/a0.png" alt="..." class="img-circle">
-                    </span>
-                    <span class="media-body block m-b-none">
-                      Use awesome animate.css<br>
-                      <small class="text-muted">10 minutes ago</small>
-                    </span>
-                                </a>
-                                <a href="#" class="media list-group-item">
-                    <span class="media-body block m-b-none">
-                      1.0 initial released<br>
-                      <small class="text-muted">1 hour ago</small>
-                    </span>
-                                </a>
+                            <div class="list-group list-group-alt scrollable notClose" id="user_mess_group" style="height: 300px">
+
                             </div>
-                            <div class="panel-footer text-sm">
-                                <a href="#" class="pull-right"><i class="fa fa-cog"></i></a>
-                                <a href="#notes" data-toggle="class:show animated fadeInRight">See all the notifications</a>
+                            <div class="panel-footer text-sm notClose">
+                                <span  id="btn_show_more_mess" class="click pull-right notClose" >显示更多</span>
+                                <span id="read_all"  class="click pull-left notClose">全部标记为已读</span>
                             </div>
                         </section>
                     </section>
                 </li>
 
-                <!--用户已登录-->
-                {if $currentUser}
+
+                <!--用户-->
                 <li class=" dropdown">
                     <a href="javascript:void(0);" class="dropdown-toggle bg clear" data-toggle="dropdown">
                         <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
@@ -167,23 +204,11 @@
                     <ul class="dropdown-menu animated fadeInRight">
                         <li>
                             <span class="arrow top"></span>
-                            <a href="listen.html">Settings</a>
-                        </li>
-                        <li>
-                            <a href="profile.html">Profile</a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <span class="badge bg-danger pull-right">3</span>
-                                Notifications
-                            </a>
-                        </li>
-                        <li>
-                            <a href="docs.html">Help</a>
+                            <a href="/userHome/{$currentUser.id}" data-bjax>个人主页</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="modal.lockme.html" data-toggle="ajaxModal">Logout</a>
+                            <a href="javascript:void(0);" id="btn_logout">注销</a>
                         </li>
                     </ul>
                 </li>
@@ -215,9 +240,9 @@
             <!-- .aside left 左边导航栏 -->
             <aside class="bg-black dk nav-xs aside hidden-print" id="nav">
                 <section class="vbox">
-                    <section class="w-f-md scrollable">
-                        <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="10px" data-railOpacity="0.2">
-
+                    <section class="w-f-md scrollable" >
+                        <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0"
+                             data-size="10px" data-railOpacity="0.2">
 
 
                             <!-- nav -->
@@ -246,9 +271,8 @@
                                         Mine
                                     </li>
                                     <li>
-                                        <a href="events.html">
+                                        <a href="/friend" data-bjax>
                                             <i class="icon-users icon"></i>
-                                            <b class="badge bg-primary pull-right">6</b>
                                             <span class="font-bold">朋友</span>
                                         </a>
                                     </li>
@@ -264,12 +288,12 @@
                                             <span class="font-bold">我的MV</span>
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="/myUpload" data-bjax>
-                                            <i class="icon-cloud-upload icon"></i>
-                                            <span class="font-bold">我的上传</span>
-                                        </a>
-                                    </li>
+                                    <!--<li>-->
+                                    <!--<a href="/myUpload" data-bjax>-->
+                                    <!--<i class="icon-cloud-upload icon"></i>-->
+                                    <!--<span class="font-bold">我的上传</span>-->
+                                    <!--</a>-->
+                                    <!--</li>-->
 
                                 </ul>
                             </nav>
@@ -286,10 +310,16 @@
 
 
                     <script>
+                        {if $currentUser}
+                        //当前用户id
+                        var currentUserId='{$currentUser.id}';
+                        {/if}
                         var album={$albumJson};
-                        var draw=0;
+
                         //初始化
                         function init() {
+                            //用户信息
+
                             //显示音乐播放器
                             $("#footerPlayer").slideDown();
 
@@ -302,7 +332,6 @@
                                 "ajax": {
                                     url: baseUrl + '/api/album/findSongInAlbum',
                                     dataSrc: function (json) {
-                                        json.draw = draw++;
                                         json.recordsTotal = json.data.total;
                                         json.recordsFiltered = json.data.total;
                                         allData = json.data.rows;
@@ -312,12 +341,13 @@
                                         albumId: album.id
                                     }
                                 },
-                                //"processing":true,
+                                "processing":true,
                                 "info":false,//左下的提示
                                 "lengthChange":false,//不显示设置每页多少的
                                 "autoWidth": false,
                                 "serverSide": true,
                                 "ordering": false,
+                                "searching":false,
                                 "columns": [
                                     {
                                         "orderable": false,
@@ -342,7 +372,7 @@
                                                         '<i class="fa fa-heart text  text-danger"></i>' +
                                                         '</span>';
                                             }
-                                            return result + '<a href="#" class="m-l">' +
+                                            return result + '<a href="javascript:void(0);"  class="m-l song_download" data-song_id=\"'+full.song_id+'\">'  +
                                                     '<span class="icon icon-arrow-down"></span>' +
                                                     '</a>';
                                         }
@@ -380,7 +410,7 @@
                                         "render": function (data, type, full, meta) {
                                             var result = "";
                                             if (data) {
-                                                result = "<a href='/album/" + full.albumId + "data-bjax>" + data + "</a>";
+                                                result = "<a href='/album/" + full.albumId + "' data-bjax>" + data + "</a>";
                                             }
                                             return result;
                                         }
@@ -467,22 +497,17 @@
                                     </div>
                                     <div class="m-t">
                                         <div class="btn-group">
-                                            <button class="btn btn-default">
+                                            <button class="btn btn-default album_play" data-albumid="{$album.id}">
                                                 <span class="fa fa-play-circle-o text-danger h4"></span>
                                                 <span>播放全部</span>
-                                            </button>
-                                            <button class="btn btn-default">
-                                                <span>+</span>
                                             </button>
                                         </div>
                                         <button data-target="{$album.id}" data-collecttype="2"  class="btn btn-default btnAddToCollect">
                                             <span class="fa fa-plus-square-o"></span>
                                             收藏
                                         </button>
-                                        <button class="btn btn-default">
-                                            <span class="fa fa-share-square-o"></span>
-                                            分享
-                                        </button>
+
+                                        <!--分享-->
 
                                     </div>
                                     <div class="b-light m-t ">
@@ -677,6 +702,7 @@
     </footer>
 </section>
 <script src="{$baseUrl}/static/scripts/libs/jquery.min.js"></script>
+
 <script type="text/javascript" src="{$baseUrl}/static/scripts/libs/jquery-jtemplates.js"></script>
 <!-- Bootstrap -->
 <script src="{$baseUrl}/static/scripts/libs/bootstrap.js"></script>
@@ -692,6 +718,10 @@
 <script src="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.js"></script>
 <!--notice-->
 <script type="text/javascript" src="{$baseUrl}/static/scripts/libs/notice/notie.js"></script>
+<!--template-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/artTemplate/template.js"></script>
+<!--图片裁剪-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/cropper/cropper.min.js"></script>
 <!-- App -->
 <script src="{$baseUrl}/static/scripts/common/app.js"></script>
 <script src="{$baseUrl}/static/scripts/common/app.plugin.js"></script>
@@ -702,8 +732,13 @@
 <script type="text/javascript" src="{$baseUrl}/static/scripts/app/dao/dao.js"></script>
 <script type="text/javascript" src="{$baseUrl}/static/scripts/app/service/server.js"></script>
 <script type="text/javascript" src="{$baseUrl}/static/scripts/app/service/user_login_register.js"></script>
+
 <script>
     init();
+    $(function(){
+        initUserMess();
+        job();
+    })
 </script>
 
 </body>

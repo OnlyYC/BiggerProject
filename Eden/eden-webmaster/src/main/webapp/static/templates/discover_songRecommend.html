@@ -1,0 +1,18 @@
+{#foreach $T as record}
+<div class="col-xs-4 col-sm-2 col-lg-2">
+    <div class="item">
+        <div class="pos-rlt ">
+            <div class="item-overlay transparency  r r-2x bg-light song" data-songid="{$T.record.song_id}">
+                <div class="bottom text-center m-t-n">
+                    <span class="click" ><i class="fa fa-play-circle-o i-3x pull-right m-sm song_play" data-songid="{$T.record.song_id}"></i></span>
+                </div>
+            </div>
+            <span class="click"><img src="{$T.record.poster}" alt="" class="r r-2x img-full "></span>
+        </div>
+        <div class="padder-v">
+            <a href="/song/{$T.record.song_id}" data-bjax class="text-ellipsis">{$T.record.title}</a>
+        </div>
+    </div>
+</div>
+
+{#/for}

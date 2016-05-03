@@ -1,0 +1,24 @@
+{
+  "recordsFiltered":57,
+  "data":[
+    {
+      "id":1,
+      "name":"壹个人",
+      "cover":"images/user_1.jpg",
+      "role":"3",
+      "info":"NO Game,No Life"
+    },
+    {
+      "id":2,
+      "name":"周杰伦",
+      "cover":"images/user_2.jpg",
+      "role":"2"
+    },
+    {
+      "id":2,
+      "name":"云音乐",
+      "cover":"images/user_3.jpg",
+      "role":"1"
+    }
+  ]
+}

@@ -46,7 +46,7 @@
         var albumData={
             albumId:albumId
         };
-        return utils.post(baseUrl+'/api/songlist/findSongCustomInAlbum',albumData,function(data){
+        return utils.post(baseUrl+'/api/album/findSongCustomInAlbum',albumData,function(data){
             return data;
         },"json")
     };
@@ -177,6 +177,101 @@
         })
     };
 
+    //歌曲，mv下载
+    var download=function(songId){
+        window.open(baseUrl+'/api/song/download/'+songId);
+    };
+
+
+    /**
+     * 文件上传
+     * @param fileData
+     * @returns {*}
+     */
+    var upload=function(fileData){
+        var dtd = $.Deferred(),
+            data;
+        $.ajax(baseUrl+'/api/file/upload', {
+            method: "POST",
+            data: fileData,
+            processData: false,
+            contentType: false
+        }).done(function (data) {
+            dtd.resolve(data);
+        }).fail(function (a, b, c) {
+            dtd.reject(data);
+        });
+        return dtd.promise();
+    };
+
+    //修改个人信息
+    var editUserInfo=function(user){
+        return utils.post(baseUrl+'/api/user/editUserInfo',user,function(data){
+            return data;
+        });
+    };
+
+    //发表动态
+    var sendDynamic=function( content){
+        var data={
+            'content':content
+        };
+        return utils.post(baseUrl+'/api/dynamic/sendDynamic',data,function(data){
+            return data;
+        });
+    };
+
+    //更新歌单信息
+    var updateSonglist=function(songlist){
+        return utils.post(baseUrl+'/api/songlist/updateSonglist',songlist,function(data){
+            return data;
+        });
+    };
+
+    //赞，动态
+    var praiseDynamic=function(dynamicId){
+        var data={
+            'dynamicId':dynamicId
+        };
+        return utils.post(baseUrl+'/api/dynamic/praiseDynamic',data,function(data){
+            return data;
+        });
+    };
+
+    //从歌单中移除歌曲
+    var removeSongFromSonglist=function(songId,songlistId){
+        var data={
+            'songId':songId,
+            'songlistId':songlistId
+        };
+        return utils.post(baseUrl+'/api/songlist/removeSongFromSonglist',data,function(data){
+            return data;
+        });
+    };
+
+    //删除歌单
+    var dealMySonglist=function(songlistId){
+        var data={
+            'songlistId':songlistId
+        };
+        return utils.post(baseUrl+'/api/songlist/dealMySonglist',data,function(data){
+            return data;
+        });
+
+    };
+
+    //发送消息
+    var sendMess=function(toUser,content,type){
+        var data={
+            'toUser':toUser,
+            'content':content,
+            'type':type
+
+        };
+        return utils.post(baseUrl+'/api/mess/sendMess',data,function(data){
+            return data;
+        });
+    };
 
 
 
@@ -198,7 +293,16 @@
         praiseComment:praiseComment,
         showMyLastMess:showMyLastMess,
         showMyUreadMessPrevious:showMyUreadMessPrevious,
-        readMess:readMess
+        readMess:readMess,
+        download:download,
+        upload:upload,
+        editUserInfo:editUserInfo,
+        sendDynamic:sendDynamic,
+        updateSonglist:updateSonglist,
+        praiseDynamic:praiseDynamic,
+        removeSongFromSonglist:removeSongFromSonglist,
+        dealMySonglist:dealMySonglist,
+        sendMess:sendMess
 
     }
 

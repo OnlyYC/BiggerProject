@@ -1,15 +1,20 @@
 package com.liaoyb.persistence.serviceImpl;
 
+import com.alibaba.dubbo.common.utils.Assert;
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.liaoyb.filestore.model.FileCloudInfo;
 import com.liaoyb.filestore.service.FileStoreService;
 import com.liaoyb.persistence.service.FileService;
+import com.liaoyb.util.UUIDUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -31,13 +36,19 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional
     public FileCloudInfo upload(MultipartFile fileUpload) throws Exception {
-//        String contentType=fileUpload.getContentType();
 
-        String fileName="test.mp3";
-        byte[]bytes= FileUtils.readFileToByteArray(new File("E:\\test.mp3"));
+        Assert.notNull(fileUpload,"上传文件不能为空");
+        byte[]bytes=fileUpload.getBytes();
 
-        FileCloudInfo fileCloudInfo=fileStoreService.upload(fileName,bytes);
-        System.out.println("fileCloudInfo:"+fileCloudInfo);
+        String originalFilename=fileUpload.getOriginalFilename();
+        if(StringUtils.isEmpty(originalFilename)||originalFilename.indexOf(".")<0){
+            originalFilename="裁剪.png";
+        }
+        FileCloudInfo fileCloudInfo=fileStoreService.addFileInfo(originalFilename,bytes.length);
+
+
+        //保存
+        FileUtils.writeByteArrayToFile(new File(fileCloudInfo.getSavePath()),fileUpload.getBytes());
 
         return fileCloudInfo;
     }

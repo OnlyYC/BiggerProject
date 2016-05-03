@@ -2,11 +2,12 @@ package com.liaoyb.web.api;
 
 import com.liaoyb.base.annotation.AuthPassport;
 import com.liaoyb.base.domain.Page;
-import com.liaoyb.persistence.domain.dto.Response;
-import com.liaoyb.persistence.domain.dto.SongDto;
-import com.liaoyb.persistence.domain.dto.SongOfList;
-import com.liaoyb.persistence.domain.dto.SonglistCountDto;
+import com.liaoyb.base.support.exception.PermissionDeniedException;
+import com.liaoyb.filestore.model.FileCloudInfo;
+import com.liaoyb.filestore.service.FileStoreService;
+import com.liaoyb.persistence.domain.dto.*;
 import com.liaoyb.persistence.domain.vo.base.Songlist;
+import com.liaoyb.persistence.domain.vo.base.SonglistWithSong;
 import com.liaoyb.persistence.domain.vo.base.User;
 import com.liaoyb.persistence.domain.vo.custom.SongCustom;
 import com.liaoyb.persistence.service.SongOfListService;
@@ -16,6 +17,7 @@ import com.liaoyb.support.utils.MyResultUtil;
 import com.liaoyb.support.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -38,6 +40,9 @@ public class SonglistContoller {
 
     @Autowired
     private SongOfListService songOfListService;
+
+    @Autowired
+    private FileStoreService fileStoreService;
 
     //包含某首歌的歌单
     @RequestMapping("/songListIncludeSong")
@@ -63,6 +68,8 @@ public class SonglistContoller {
     //歌单中的音乐SongDto
     @RequestMapping("/findSongDtoInSonglist")
     public void findSongDtoInSonglist(HttpServletRequest request, HttpServletResponse response, Page<SongDto>page, Long songlistId){
+
+        WebUtils.setPage(page,request);
         //当前用户
         User currentUser= WebUtils.getCurrentUser(request);
         page=songlistService.findSongDtoInSonglist(page,songlistId,currentUser!=null?currentUser.getId():null);
@@ -117,8 +124,8 @@ public class SonglistContoller {
      * @param response
      * @param page
      */
-    @RequestMapping("/findSongCustomsBySongType")
-    public void findSongCustomsBySongType(HttpServletResponse response, Page<Songlist>page, @RequestParam(value = "typeId[]",required = false)Long[] typeId){
+    @RequestMapping("/findSonglistBySongType")
+    public void findSonglistBySongType(HttpServletResponse response, Page<Songlist>page, @RequestParam(value = "typeId[]",required = false)Long[] typeId){
         //数组转为集合
 
         List<Long>typeIds=null;
@@ -157,6 +164,91 @@ public class SonglistContoller {
         Response re=songlistService.createSonglist(currentUser.getId(),listName);
         MyResultUtil.sendResponse(response,re);
 
+    }
+
+
+
+    /**
+     * 修改歌单信息
+     * @param request
+     * @param response
+     * @param songlist
+     * @param coverKey
+     * @throws Exception
+     */
+    @RequestMapping("/updateSonglist")
+    @AuthPassport
+    public void updateSonglist(HttpServletRequest request, HttpServletResponse response,Songlist songlist,String coverKey) throws Exception {
+        //歌单是否自己的
+        UserDto userDto=WebUtils.getCurrentUser(request);
+        boolean isusers=songlistService.userOwn(songlist.getId(),userDto.getId());
+        if(isusers){
+            //允许修改
+
+            if(!StringUtils.isEmpty(coverKey)){
+                FileCloudInfo fileCloudInfo=fileStoreService.getFileCLoudInfo(coverKey);
+                songlist.setCoverUrl(fileCloudInfo.getUrl());
+            }
+
+            songlistService.updateSonglist(songlist);
+            MyResultUtil.sendSuccess(response,"歌单信息更新成功");
+        }else{
+            //权限不足
+            throw new PermissionDeniedException();
+        }
+    }
+
+
+    /**
+     * 删除歌单
+     * @param request
+     * @param response
+     * @param songlistId
+     * @throws Exception
+     */
+    @RequestMapping("/dealMySonglist")
+    @AuthPassport
+    public void dealMySonglist(HttpServletRequest request, HttpServletResponse response,Long  songlistId) throws Exception {
+        UserDto userDto=WebUtils.getCurrentUser(request);
+        boolean ismy=songlistService.userOwn(songlistId,userDto.getId());
+        if(ismy){
+            //允许删除
+            boolean isDelSuccess=songlistService.dealSonglistById(songlistId);
+            if(isDelSuccess){
+                MyResultUtil.sendSuccess(response,"删除歌单成功");
+            }else{
+                MyResultUtil.sendFail(response,"删除歌单失败");
+            }
+        }else{
+            throw new PermissionDeniedException();
+        }
+    }
+
+    /**
+     * 从歌单中移除歌曲
+     * 要是用户自己的歌单
+     * @param request
+     * @param response
+     * @param songlistWithSong
+     * @throws Exception
+     */
+    @RequestMapping("/removeSongFromSonglist")
+    @AuthPassport
+    public void removeSongFromSonglist(HttpServletRequest request, HttpServletResponse response, SonglistWithSong songlistWithSong) throws Exception {
+
+        UserDto userDto=WebUtils.getCurrentUser(request);
+        boolean ismy=songlistService.userOwn(songlistWithSong.getSonglistId(),userDto.getId());
+        if(ismy){
+            //允许移除
+            boolean remSucc=songlistService.removeSongFromSonglist(songlistWithSong);
+            if(remSucc){
+                MyResultUtil.sendSuccess(response,"从歌单中移除歌曲成功");
+            }else{
+                MyResultUtil.sendFail(response,"从歌单中移除歌曲失败");
+            }
+        }else{
+            throw new PermissionDeniedException();
+        }
     }
 
 }

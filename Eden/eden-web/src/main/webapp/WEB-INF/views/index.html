@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="{$baseUrl}/static/css/font.css" type="text/css"/>
     <link rel="stylesheet" href="{$baseUrl}/static/css/app.css" type="text/css"/>
     <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/datatables/dataTables.bootstrap.min.css" type="text/css"/>
+    <!--图片裁剪-->
+    <link rel="stylesheet" href="{$baseUrl}/static/scripts/libs/cropper/cropper.min.css">
 
 
     <link rel="stylesheet" href="{$baseUrl}/static/css/loading/ball-clip-rotate-multiple.css">
@@ -93,7 +95,7 @@
                                 <input  class="form-control" type="text" placeholder="Email" name="email">
                                 <input  class="form-control" type="password" placeholder="Password" name="password">
                             </form>
-                            <button class="btn btn-default btn-login"   onclick="loginAjax()">Login</button>
+                            <button class="btn btn-default btn-login" id="login_btn"   >Login</button>
                         </div>
                     </div>
                 </div>
@@ -108,7 +110,7 @@
                                 <input name="code" class="form-control" type="text" placeholder="code">
 
                             </form>
-                            <button class="btn btn-default btn-register m-t" id="register_submit_btn" disabled >Create account</button>
+                            <button class="btn btn-default btn-register m-t" id="register_submit_btn"  >Create account</button>
                         </div>
                     </div>
                 </div>
@@ -138,7 +140,6 @@
             </a>
             <a href="/" data-bjax class="navbar-brand text-lt">
                 <i class="icon-earphones"></i>
-                <img src="images/logo.png" alt="." class="hide">
                 <span class="hidden-nav-xs m-l-sm">EDEN</span>
             </a>
             <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".user">
@@ -170,7 +171,7 @@
                 {if $currentUser}
                 <!--消息-->
                 <li class="hidden-xs ">
-                    <a href="#" class="dropdown-toggle lt " data-toggle="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle lt " data-toggle="dropdown">
                         <i class="icon-bell"></i>
                         <span class="badge badge-sm up bg-danger count ">0</span>
                     </a>
@@ -286,12 +287,12 @@
                                             <span class="font-bold">我的MV</span>
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="/myUpload" data-bjax>
-                                            <i class="icon-cloud-upload icon"></i>
-                                            <span class="font-bold">我的上传</span>
-                                        </a>
-                                    </li>
+                                    <!--<li>-->
+                                        <!--<a href="/myUpload" data-bjax>-->
+                                            <!--<i class="icon-cloud-upload icon"></i>-->
+                                            <!--<span class="font-bold">我的上传</span>-->
+                                        <!--</a>-->
+                                    <!--</li>-->
 
                                 </ul>
                             </nav>
@@ -313,9 +314,6 @@
                         {/if}
 
                         function init() {
-                            //用户信息
-                            initUserMess();
-                            job();
                             //显示音乐播放器
                             $("#footerPlayer").slideDown();
                             //recover
@@ -490,6 +488,8 @@
 <script type="text/javascript" src="{$baseUrl}/static/scripts/libs/notice/notie.js"></script>
 <!--template-->
 <script type="text/javascript" src="{$baseUrl}/static/scripts/libs/artTemplate/template.js"></script>
+<!--图片裁剪-->
+<script type="text/javascript" src="{$baseUrl}/static/scripts/libs/cropper/cropper.min.js"></script>
 <!-- App -->
 <script src="{$baseUrl}/static/scripts/common/app.js"></script>
 <script src="{$baseUrl}/static/scripts/common/app.plugin.js"></script>
@@ -503,6 +503,10 @@
 
 <script>
     init();
+    $(function(){
+        initUserMess();
+        job();
+    })
 </script>
 
 

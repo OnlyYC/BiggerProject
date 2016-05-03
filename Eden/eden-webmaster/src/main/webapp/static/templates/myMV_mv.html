@@ -1,0 +1,26 @@
+{#foreach $T as record}
+<div class=" col-sm-4 col-lg-3">
+    <div class="item">
+        <div class="pos-rlt">
+            <div class="item-overlay opacity r r-2x bg-black">
+                <div class="center text-center m-t-n">
+                    <a href="/song/{$T.record.song_id}" data-bjax><i class="fa fa-play-circle i-2x"></i></a>
+                </div>
+            </div>
+            <div class="top">
+                <span class="badge bg-dark m-l-sm m-t-sm">{fmtSongTime($T.record.time)}</span>
+            </div>
+            <a href="#"><img src="{$T.record.poster}" alt="" class="r r-2x img-full"></a>
+        </div>
+        <div class="padder-v">
+            <a href="javascript:void(0);" class="text-ellipsis">{$T.record.title}</a>
+            {#foreach $T.record.artists as artist}
+            <a href="/artist/{$T.artist.id}" data-bjax class="text-ellipsis text-xs text-muted m-r-sm">{$T.artist.name}</a>
+            {#/for}
+            {#if $T.record.artists.length==0}
+            <span  class="m-r-sm">..</span>
+            {#/if}
+        </div>
+    </div>
+</div>
+{#/for}

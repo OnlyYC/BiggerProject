@@ -126,4 +126,29 @@ public class ArtistServiceImpl implements ArtistService {
         page.setResult(artistMapperCustom.findArtist(searchText));
         return page;
     }
+
+    /**
+     * 添加歌手
+     *
+     * @param artist
+     */
+    @Override
+    public void addArtist(Artist artist) {
+        artistMapper.insertSelective(artist);
+    }
+
+    /**
+     * 更新歌手信息
+     *
+     * @param artist
+     * @return
+     */
+    @Override
+    public boolean updateArtist(Artist artist) {
+        int affect=artistMapper.updateByPrimaryKeySelective(artist);
+        if(affect>0){
+            return true;
+        }
+        return false;
+    }
 }

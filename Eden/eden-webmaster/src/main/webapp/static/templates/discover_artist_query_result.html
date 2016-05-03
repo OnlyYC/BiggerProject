@@ -1,0 +1,13 @@
+
+{#foreach $T as record}
+<div class="col-xs-4 col-sm-2 col-lg-2">
+    <div class="item">
+        <div class="pos-rlt">
+            <a href="/artist/{$T.record.id}" data-bjax><img src="{$T.record.posterUrl}" alt="" class="r r-2x img-full"></a>
+        </div>
+        <div class="padder-v">
+            <a href="/artist/{$T.record.id}" data-bjax class="text-ellipsis">{$T.record.name}</a>
+        </div>
+    </div>
+</div>
+{#/for}

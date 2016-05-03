@@ -42,6 +42,15 @@ public class SysCode {
 	}
 
 
+
+	/**
+	 * 性别
+	 */
+	public static interface SEX_TYPE{
+		public static final Long MAN=1L;
+		public static final Long WOMAN=2L;
+		public static final Long UNKNOW=3L;
+	}
 	/**
 	 * 收藏类型
 	 */
@@ -55,6 +64,53 @@ public class SysCode {
 
 
 	/**
+	 * 信息类型
+	 */
+	public static interface MESS_TYPE{
+		public static final Long LETTER=1L;
+		public static final Long NOTICE=2L;
+		public static final Long APPLY=3L;
+	}
+
+
+	/**
+	 * 用户在线状态
+	 */
+	public static interface USER_LOGIN_STATE{
+		public static final Long ONLINE=1L;
+		public static final Long OFFLINE=0L;
+	}
+
+
+	/**
+	 * 访问情况-平台
+	 */
+	public static interface VISIT_RECORD_PLATFORM{
+		/**
+		 * 前台
+		 */
+		public static final Long FRONT=0L;
+		/**
+		 * 后台管理
+		 */
+		public static final Long BACKSTAGE=1L;
+
+	}
+
+	/**
+	 * 访问情况-类型
+	 */
+	public static interface VISIT_RECORD_TYPE{
+		/**
+		 * 登录
+		 */
+		public static final Long LOGIN=0L;
+		/**
+		 * 退出
+		 */
+		public static final Long LOGOUT=1L;
+	}
+	/**
 	 * 用户权限
 	 */
 	public static interface USER_ROLE{
@@ -66,6 +122,10 @@ public class SysCode {
 		 * 管理员
 		 */
 		public static final Long ADMIN_ROLE_ID=2L;
+		/**
+		 * 高级管理员
+		 */
+		public static final Long ADVANCED_ADMIN_ROLE_ID=3L;
 	}
 
 
@@ -101,13 +161,18 @@ public class SysCode {
 	}
 
 	/**
-	 * 歌单类型,普通歌单还是官方榜单、全球榜单
+	 * 歌单类型,普通歌单还是官方榜单、全球榜单，每日推荐
 	 */
 	public static interface SONGLIST_TYPE{
 
+		/**
+		 * 我喜欢
+		 */
+		public static final Long ILOVE=0L;
 		public static final Long COMMON_LIST=1L;
 		public static final Long OFFICIAL_LIST=2L;
 		public static final Long GLOBAL_LIST=3L;
+		public static final Long DAILY_RECOMMENDED=4L;
 	}
 
 

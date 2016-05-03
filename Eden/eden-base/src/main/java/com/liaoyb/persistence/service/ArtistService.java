@@ -87,4 +87,17 @@ public interface ArtistService {
      * @return
      */
     Page<ArtistDto> findArtist(Page<ArtistDto> page, String searchText);
+
+    /**
+     * 添加歌手
+     * @param artist
+     */
+    void addArtist(Artist artist);
+
+    /**
+     * 更新歌手信息
+     * @param artist
+     * @return
+     */
+    boolean updateArtist(Artist artist);
 }

@@ -3,7 +3,10 @@ package com.liaoyb.web.api;
 import com.liaoyb.base.annotation.AuthPassport;
 import com.liaoyb.base.domain.Page;
 import com.liaoyb.base.support.exception.CustomException;
+import com.liaoyb.filestore.model.FileCloudInfo;
+import com.liaoyb.filestore.service.FileStoreService;
 import com.liaoyb.persistence.domain.dto.*;
+import com.liaoyb.persistence.domain.vo.base.Artist;
 import com.liaoyb.persistence.domain.vo.base.Collect;
 import com.liaoyb.persistence.domain.vo.base.User;
 import com.liaoyb.persistence.domain.vo.custom.SongCustom;
@@ -13,6 +16,7 @@ import com.liaoyb.persistence.serviceImpl.UserServiceImpl;
 import com.liaoyb.base.support.exception.SourcesNotFoundException;
 import com.liaoyb.support.utils.MyResultUtil;
 import com.liaoyb.support.utils.WebUtils;
+import com.liaoyb.util.BaseWebUtils;
 import com.liaoyb.util.MailUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +49,9 @@ public class UserController {
 
     @Autowired
     private CollectService collectService;
+
+    @Autowired
+    private FileStoreService fileStoreService;
 
 
     /**
@@ -126,7 +133,7 @@ public class UserController {
     public void login(HttpServletRequest request,HttpServletResponse response,String email,String password){
 
 
-        UserDto userDto=userService.userlogin(email,password);
+        UserDto userDto=userService.userLogin(email,password, BaseWebUtils.getIP(request));
         if(userDto!=null){
             //登录成功
             MyResultUtil.sendSuccess(response,"登录成功");
@@ -143,7 +150,12 @@ public class UserController {
      * @param response
      */
     @RequestMapping("/logout")
-    public void logout(HttpSession session,  HttpServletResponse response){
+    public void logout(HttpSession session,HttpServletRequest request  ,HttpServletResponse response){
+        //添加历史
+        UserDto userDto=WebUtils.getCurrentUser(request);
+        if(userDto!=null){
+            userService.userLogout(userDto,BaseWebUtils.getIP(request));
+        }
         //session失效
         session.invalidate();
         MyResultUtil.sendSuccess(response,"注销成功");
@@ -169,7 +181,7 @@ public class UserController {
         if(re.isFlag()){
             //发送激活邮件
             try {
-                String content="<p>欢迎加入，我们将为带来最好的音乐服务.</p><h2>Enjoy it!</h2><p>点击一下链接激活你的账号(此链接将在30分钟后失效):</p>" +
+                String content="<h3>欢迎加入Eden云音乐！</h3><h3> 现在，您可以随心下载海量高品质音乐！</h3><p>在这里不仅可以听歌，更欢迎您把好音乐与别人分享哦！ 一亿爱音乐的人都在这里，碰到同样音乐偏好的朋友，私信say hi吧~ 如果找不到你想听的歌曲，可以邮件给我1600174150@qq.com,王小云很乐意为您服务！</p><h3>点击一下链接激活你的账号(此链接将在30分钟后失效):</h3>" +
                         "<a href='"+ WebUtils.baseUrl(request)+"/api/user/activateAccount?email="+user.getEmail()+"&registerCode="+user.getRegisterCode()+"'>点我激活</a>";
                 MailUtil.send(user.getEmail(),"激活账户",content);
             } catch (MessagingException e) {
@@ -361,6 +373,44 @@ public class UserController {
         MyResultUtil.sendResponse(response,res);
     }
 
+
+    /**
+     * 更新用户信息
+     * @param response
+     * @param request
+     * @param user
+     * @param coverKey
+     * @throws Exception
+     */
+    @RequestMapping("/editUserInfo")
+    @AuthPassport
+    public void editUserInfo(HttpServletResponse response, HttpServletRequest request, User user, String coverKey) throws Exception {
+        if(!StringUtils.isEmpty(coverKey)){
+            FileCloudInfo coverFileInfo=fileStoreService.getFileCLoudInfo(coverKey);
+            if(coverFileInfo==null){
+                MyResultUtil.sendFail(response,"修改个人信息失败");
+                return;
+            }
+            user.setAvatarUrl(coverFileInfo.getUrl());
+        }
+
+        //重新设置session中当前用户
+        //当前用户
+        UserDto userDto=WebUtils.getCurrentUser(request);
+        user.setId(userDto.getId());
+        boolean isSuccess=userService.updateUser(user);
+
+
+
+        UserDto lastUserDto=userService.findUserDto(userDto.getId());
+        WebUtils.setCurrentUser(request,lastUserDto);
+        if(isSuccess){
+            MyResultUtil.sendSuccess(response,"个人信息修改成功");
+        }else{
+            MyResultUtil.sendFail(response,"个人信息修改失败");
+        }
+
+    }
 
 
 }

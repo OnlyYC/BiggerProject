@@ -15,7 +15,12 @@
         <result column="sex" property="sex" jdbcType="BIGINT" />
         <result column="tel" property="tel" jdbcType="VARCHAR" />
         <result column="registerCode" property="registerCode" jdbcType="VARCHAR" />
+        <result column="valid" property="valid" jdbcType="BIGINT" />
         <result column="state" property="state" jdbcType="BIGINT" />
+        <result column="userType" property="userType" jdbcType="BIGINT" />
+        <result column="onlineState" property="onlineState" jdbcType="BIGINT" />
+        <result column="token" property="token" jdbcType="VARCHAR" />
+        <result column="lastActivityTime" property="lastActivityTime" jdbcType="BIGINT" />
 
 
         <collection property="roleType" column="roleType" ofType="long">
@@ -34,6 +39,15 @@
     <!--清理邮箱之前的未激活的注册信息-->
     <update id="cleanOutOfDateRegistration">
         update user u set u.valid=0 where u.email=#{email} and u.state=0
+    </update>
+
+
+    <!--用户登录超时检测-->
+    <update id="sessionTimeOutDetect">
+        UPDATE user set onlineState=0
+        WHERE lastActivityTime is not null
+        and (UNIX_TIMESTAMP(NOW())*1000-lastActivityTime)>1000*60*20
+        and onlineState!=0
     </update>
 
 
@@ -60,7 +74,6 @@
             and u.state=1
             and u.valid=1
         </where>
-        limit 0,1
 
     </select>
 
@@ -72,7 +85,8 @@
 
     <!--用户的创建歌单,flag表示有效-->
     <select id="findSonglistsUserCreated" resultType="com.liaoyb.persistence.domain.dto.SonglistCountDto">
-        select sl.*,count(s_w_s.songId) songCount from songlist sl LEFT JOIN songlist_with_song s_w_s on sl.id=s_w_s.songlistId where sl.userId=#{userId} and sl.flag=1
+        select sl.*,count(s_w_s.songId) songCount from songlist sl LEFT JOIN songlist_with_song s_w_s on sl.id=s_w_s.songlistId where sl.userId=#{userId}
+        and sl.flag=1 and sl.type in (1,0)
         group by sl.id
     </select>
 
@@ -170,6 +184,39 @@
         WHERE  u.state=1
          AND u.userType=1
          AND u.name like CONCAT(CONCAT('%',#{searchText}),'%')
+    </select>
+
+
+    <!--生成用户推荐，调用存储过程-->
+    <select id="generateTipList" statementType="CALLABLE">
+        {call
+          generate_user_recommend()
+        }
+    </select>
+
+
+    <!--统计用户偏好-->
+    <select id="generateUserPreference" statementType="CALLABLE">
+        {call
+          generate_user_preference()
+        }
+    </select>
+
+    <!--管理员-->
+    <select id="findManager" resultType="com.liaoyb.persistence.domain.vo.base.User">
+        SELECT * from user u JOIN (SELECT DISTINCT u_w_r.userId from user_with_role u_w_r
+        JOIN role ro ON ro.id=u_w_r.roleId WHERE ro.roleType=2)ou on ou.userId=u.id
+    </select>
+
+    <!--用户权限-->
+    <select id="findUserDto" resultMap="UserDto_baseMap">
+        select u.*,r.roleType as roleType,r.id roleId from user u left join user_with_role u_w_r on u.id=u_w_r.userId left join role r on u_w_r.roleId=r.id
+        <where>
+
+            and u.id=#{userId}
+            and u.state=1
+            and u.valid=1
+        </where>
     </select>
 
 

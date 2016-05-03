@@ -163,6 +163,15 @@ function isIE() { //ie?
         return false;
 }
 
+function dataURLtoBlob(dataurl) {
+    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], {type:mime});
+}
+
 /**
  * @function escapeHTML 转义html脚本 < > & " '
  * @param a -
@@ -183,7 +192,7 @@ function unescapeHTML(a){
 }
 //不支持ie
 if (isIE()) {
-    notie.alert(3, "本网站暂不支持IE,请更换为其他浏览器", 10000);
+    notie.alert(3, "亲！本网站暂不支持IE,请更换为Chrome或Firefox", 10000);
 }
 
 //num不足n位，在前面补0
@@ -207,6 +216,10 @@ function ExtractData(){
 function fmtSongTime(time){
 
     return pad(parseInt(time/60),2)+":"+pad(time%60,2);
+}
+
+function getCurrentUserId(){
+    return currentUserId;
 }
 
 
@@ -298,7 +311,7 @@ function getObjProperty(obj){
 
         addDom:function(){
             this.$element.empty();
-            var insertDom="<div class=\'"+this.options.className+" JtemplatePage_list' ></div><div class='pull-right'><ul class='JtemplatePage_page' ></ul></div><div class='clearfix'></div>";
+            var insertDom="<div class=\'"+this.options.className+" JtemplatePage_list' ></div><div class='clearfix'></div><div class='pull-right'><ul class='JtemplatePage_page' ></ul></div><div class='clearfix'></div>";
             if(this.options.isNeedPage){
                 //需要分页
                 this.$element.append(insertDom);
@@ -572,7 +585,7 @@ function getObjProperty(obj){
         useParmData:false,//是否,把data-...作为请求参数
         jTemplateSetting:null,
         complete:function(data,element,dataType){
-            dataType=1||dataType;
+            dataType=dataType||1;
             if(dataType==1){
                 //数据长度为0时
                 if(data.rows.length==0){
@@ -591,6 +604,24 @@ function getObjProperty(obj){
         }
     };
     $.fn.jtemplatePag.Constructor = JtemplatePag;
+
+
+    $.fn.serializeObject = function()
+    {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
 
 
 }(jQuery);

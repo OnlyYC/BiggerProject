@@ -6,6 +6,7 @@ import com.liaoyb.persistence.domain.dto.SongDto;
 import com.liaoyb.persistence.domain.dto.SonglistCountDto;
 import com.liaoyb.persistence.domain.dto.SonglistDto;
 import com.liaoyb.persistence.domain.vo.base.Songlist;
+import com.liaoyb.persistence.domain.vo.base.SonglistWithSong;
 import com.liaoyb.persistence.domain.vo.custom.SongCustom;
 
 import java.util.List;
@@ -150,4 +151,21 @@ public interface SonglistService {
      * @return
      */
     Response createSonglist(Long userId,String listName) throws Exception;
+
+
+
+    /**
+     * 歌单是否用户自己的
+     * @param songlistId
+     * @param userId
+     * @return
+     */
+    boolean userOwn(Long songlistId,Long userId);
+
+    /**
+     * 从歌单中移除歌曲
+     * @param songlistWithSong
+     * @return
+     */
+    boolean removeSongFromSonglist(SonglistWithSong songlistWithSong);
 }

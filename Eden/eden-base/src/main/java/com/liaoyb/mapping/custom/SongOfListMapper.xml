@@ -43,5 +43,6 @@
         )t
         left join song_with_artist s_w_a on t.id=s_w_a.songid
         left join artist ar on ar.id=s_w_a.artistid
+        order by t.rank
     </select>
 </mapper>

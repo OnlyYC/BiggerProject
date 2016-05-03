@@ -4,6 +4,7 @@ import com.liaoyb.persistence.domain.dto.SonglistCountDto;
 import com.liaoyb.persistence.domain.dto.SonglistDto;
 import com.liaoyb.persistence.domain.vo.base.Songlist;
 import com.liaoyb.persistence.domain.vo.base.Tag;
+import com.liaoyb.persistence.domain.vo.base.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -62,4 +63,12 @@ public interface SonglistMapperCustom {
      * @return
      */
     List<SonglistCountDto> findSonglist(String searchText);
+
+
+    /**
+     * 当用户信息修改后更新歌单相关信息
+     * @param user
+     * @return
+     */
+    int updateSonglistWhenUserInfoUpdate(@Param("user") User user);
 }

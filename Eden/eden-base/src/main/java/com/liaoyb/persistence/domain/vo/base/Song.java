@@ -38,6 +38,7 @@ public class Song {
 
     private String songFileKey;
 
+    @JSONField(name = "mp3")
     private String songUrl;
 
     private Long time;

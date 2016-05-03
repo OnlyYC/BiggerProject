@@ -10,6 +10,10 @@
                 });
 
             });
+        },
+        //下载
+        download:function(song_id){
+            dao.download(song_id);
         }
     };
 
@@ -23,6 +27,25 @@
 
                 });
             })
+        },
+        //从歌单中移除歌曲
+        removeSongFromSonglist:function(songId,songlistId,succBack,failBack){
+            dao.removeSongFromSonglist(songId,songlistId).done(function(data){
+                Base.processData(data,succBack,failBack);
+            });
+        },
+        //删除歌单
+        dealMySonglist:function(songlistId,succBack,failBack){
+            dao.dealMySonglist(songlistId).done(function(data){
+                Base.processData(data,succBack,failBack);
+            });
+        }
+    };
+    var myfile={
+        upload:function(fileData,succCall,failCall){
+            dao.upload(fileData).done(function(data){
+                Base.processData(data,succCall,failCall);
+            });
         }
     };
 
@@ -88,9 +111,9 @@
                 Base.processData(data);
             });
         },
-        newSonglist:function(listName){
+        newSonglist:function(listName,succBack){
             dao.newSonglist(listName).done(function(data){
-               Base.processData(data);
+               Base.processData(data,succBack);
             });
         },
 
@@ -148,6 +171,36 @@
             dao.readMess(messIdArray).done(function(data){
                 callBack(data);
             });
+        },
+        //修改个人信息
+        editUserInfo:function(user,succBack,failBack){
+            dao.editUserInfo(user).done(function(data){
+                Base.processData(data,succBack,failBack);
+            });
+        },
+        //发表动态
+        sendDynamic:function(content,succBack,failBack){
+            dao.sendDynamic(content).done(function(data){
+                Base.processData(data,succBack,failBack);
+            })
+        },
+        //更新歌单信息
+        updateSonglist:function(songlist,succBack,failBack){
+            dao.updateSonglist(songlist).done(function(data){
+                Base.processData(data,succBack,failBack);
+            });
+        },
+        //赞，动态
+        praiseDynamic:function(dynamicId,succBack,failBack){
+            dao.praiseDynamic(dynamicId).done(function(data){
+                Base.processData(data,succBack,failBack);
+            });
+        },
+        //发送消息
+        sendMess:function(toUser,content,type,succBack,failBack){
+            dao.sendMess(toUser,content,type).done(function(data){
+                Base.processData(data,succBack,failBack);
+            });
         }
 
 
@@ -171,7 +224,8 @@
         songlist:songlist,
         album:album,
         user:user,
-        open:open
+        open:open,
+        myfile:myfile
     }
 
 

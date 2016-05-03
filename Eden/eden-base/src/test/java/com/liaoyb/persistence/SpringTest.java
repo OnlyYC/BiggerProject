@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @TransactionConfiguration(defaultRollback=false)
-@ContextConfiguration(locations = {"/spring/applicationContext-dao.xml","/spring/applicationContext-service.xml"})
+@ContextConfiguration(locations = {"/spring/applicationContext-dao.xml","/spring/applicationContext-service.xml", "/spring/applicationContext-dubbo.xml"})
 public class SpringTest extends AbstractTransactionalJUnit4SpringContextTests{
 
 }

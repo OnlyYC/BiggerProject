@@ -1,0 +1,27 @@
+{#param name=rank value=1}
+{#foreach $T as record}
+<div  class="click list-group-item item  m clear ranksong" data-song_id="{$T.record.song_id}">
+    <span class="h2 padder-v m-r pull-left">{$P.rank++}</span>
+    <div class="thumb-lg pos-rlt pull-left">
+        <div class="item-overlay  r r-2x active">
+            <div class="center text-center  m-t-n">
+                <a href="#"><i class="fa fa-play-circle i-2x text-white"></i></a>
+            </div>
+        </div>
+        <a href="#"><img src="{$T.record.poster}" alt="" class="r r-2x img-full"></a>
+    </div>
+
+    <span class="clear padder">
+        <span>{$T.record.title}</span>
+       <small class="text-muted clear text-ellipsis">
+           {#foreach $T.record.artists as artist}
+           {#if $T.artist$index>0}
+           &&{$T.artist.name}
+           {#else}
+           {$T.artist.name}
+           {#/if}
+           {#/for}
+       </small>
+    </span>
+</div>
+{#/for}

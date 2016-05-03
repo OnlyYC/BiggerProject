@@ -50,4 +50,7 @@ public interface CommentService {
      * @return
      */
     Response submitComment(Long userId, Long type, Long targetId,String content, String commType) throws Exception;
+
+
+
 }

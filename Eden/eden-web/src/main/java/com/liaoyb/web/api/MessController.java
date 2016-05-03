@@ -92,4 +92,26 @@ public class MessController {
     }
 
 
+    /**
+     * 发送消息
+     * @param request
+     * @param response
+     * @param mess
+     */
+    @RequestMapping("/sendMess")
+    @AuthPassport
+    public void sendMess(HttpServletRequest request, HttpServletResponse response,Mess mess){
+        //发送方
+        UserDto userDto=WebUtils.getCurrentUser(request);
+
+        mess.setFromUser(userDto.getId());
+        mess.setFromUserAvatar(userDto.getAvatarUrl());
+        mess.setFromUserName(userDto.getName());
+        boolean sendSucc=messService.sendMess(mess);
+        if(sendSucc){
+            MyResultUtil.sendSuccess(response,"消息发送成功");
+        }
+    }
+
+
 }

@@ -1,10 +1,14 @@
 {#foreach $T as record}
 <div class="b-a b-light  m-md">
     <div class="m-t">
+
+        {#if $T.record.userId!=getCurrentUserId()}
         <button data-target="{$T.record.userId}" data-collecttype="5" class="btn btn-default  pull-right btnAddToCollect">
             <i class="icon-plus icon"></i>
             关注
         </button>
+        {#/if}
+
         <span class="pull-left thumb avatar m-r">
             <img src="{$T.record.userAvatarUrl}">
         </span>
@@ -16,14 +20,14 @@
     </div>
     <div class="m-l-xl">
         <!--动态内容-->
-        <div>
+        <div class="m-l-md">
             {$T.record.content}
         </div>
-        <div>
+        <div class="m-l-md">
             <div class="pull-right handle">
-                <span class="click">
+                <span class="click praise_dynamic" data-dynamic_id="{$T.record.id}">
                     <i class="icon-like icon"></i>
-                    ({$T.record.praiseCount})
+                    (<span class="praiseCount">{$T.record.praiseCount}</span>)
                 </span>
                 <span class="click dy_comment"  data-param="{$T.record.id}" data-target="#dynamic_comment_{$T.record$index}">
                     评论(<span id="comCount_{$T.record.id}">{$T.record.commentCount}</span>)

@@ -9,6 +9,11 @@ import java.io.Serializable;
  * @author ybliao2
  */
 public class FileCloudInfo implements Serializable {
+    //原始文件名
+    private String originalFileName;
+
+    //保存的地址
+    private String savePath;
     //文件的key
     private String key;
     //文件类型
@@ -18,6 +23,22 @@ public class FileCloudInfo implements Serializable {
     //下载url
     private String downloadUrl;
     private Long fileSize;
+
+    public String getSavePath() {
+        return savePath;
+    }
+
+    public void setSavePath(String savePath) {
+        this.savePath = savePath;
+    }
+
+    public String getOriginalFileName() {
+        return originalFileName;
+    }
+
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
+    }
 
     public Long getFileSize() {
         return fileSize;

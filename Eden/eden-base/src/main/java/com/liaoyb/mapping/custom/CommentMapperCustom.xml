@@ -24,6 +24,22 @@
         UPDATE comment set praiseCount=praiseCount+1 WHERE id=#{commentId}
     </update>
 
+
+    <!--当用户信息改变时，修改评论的相关信息-->
+    <update id="updateCommentWhenUserInfoUpdate">
+
+        UPDATE comment
+        <set>
+            <if test="user.name!=null">
+                username=#{user.name},
+            </if>
+            <if test="user.avatarUrl!=null">
+                userAvatarUrl=#{user.avatarUrl},
+            </if>
+        </set>
+        where userId=#{user.id}
+    </update>
+
     <!--子评论-->
     <select id="findChildComments" resultType="com.liaoyb.persistence.domain.vo.base.Comment">
         select * from comment where fatherCommentId=#{fatherCommentId}

@@ -3,6 +3,9 @@ package com.liaoyb.persistence.serviceImpl;
 import com.liaoyb.base.SysCode;
 import com.liaoyb.base.annotation.PageAnnotation;
 import com.liaoyb.base.domain.Page;
+import com.liaoyb.base.support.exception.SourcesNotFoundException;
+import com.liaoyb.filestore.model.FileCloudInfo;
+import com.liaoyb.filestore.service.FileStoreService;
 import com.liaoyb.persistence.dao.base.SongMapper;
 import com.liaoyb.persistence.dao.base.UserlistenMapper;
 import com.liaoyb.persistence.dao.custom.SongMapperCustom;
@@ -13,9 +16,17 @@ import com.liaoyb.persistence.domain.vo.base.SongExample;
 import com.liaoyb.persistence.domain.vo.base.Userlisten;
 import com.liaoyb.persistence.domain.vo.custom.SongCustom;
 import com.liaoyb.persistence.service.SongService;
+import com.liaoyb.util.BaseWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 
 /**
@@ -33,6 +44,9 @@ public class SongServiceImpl implements SongService {
     private UserlistenMapper userlistenMapper;
     @Autowired
     private SongMapper songMapper;
+
+    @Autowired
+    private FileStoreService fileStoreService;
 
     /**
      * 所有歌曲,分页
@@ -281,5 +295,60 @@ public class SongServiceImpl implements SongService {
     public Page<SongDto> findSongDtoRandom(Page<SongDto> page, Long userId, Long type) {
         page.setResult(songMapperCustom.findSongDtoRandom(userId,type));
         return page;
+    }
+
+    /**
+     * 音乐下载,更新下载量
+     *
+     * @param request
+     * @param response
+     * @param songId
+     */
+    @Override
+    @Transactional
+    public void download(HttpServletRequest request, HttpServletResponse response, Long songId) throws Exception {
+        //获取歌曲信息
+        SongCustom songCustom=findSongCustomById(songId);
+        if(songCustom==null)
+            throw new SourcesNotFoundException();
+        String key=songCustom.getSongFileKey();
+
+        FileCloudInfo fileCloudInfo=fileStoreService.getFileCLoudInfo(key);
+
+        //返回的文件名
+        String fileName=null;
+        if(StringUtils.hasLength(songCustom.getName())){
+            fileName=songCustom.getName()+fileCloudInfo.getUrl().substring(fileCloudInfo.getUrl().lastIndexOf("."));
+        }else{
+            fileName=fileCloudInfo.getUrl().substring(fileCloudInfo.getUrl().lastIndexOf("/"));
+        }
+        //更新下载量
+        songMapperCustom.addOneSongDownloadCount(songId);
+
+
+        //通过文件服务拿到字节数组
+        BaseWebUtils.download(fileName,new FileInputStream(new File(fileCloudInfo.getSavePath())),request,response);
+    }
+
+    /**
+     * 添加歌曲
+     *
+     * @param song
+     * @throws Exception
+     */
+    @Override
+    public void addSong(Song song) throws Exception {
+        songMapper.insertSelective(song);
+    }
+
+    /**
+     * 编辑歌曲
+     *
+     * @param song
+     * @throws Exception
+     */
+    @Override
+    public void updateSong(Song song) throws Exception {
+        songMapper.updateByPrimaryKeySelective(song);
     }
 }

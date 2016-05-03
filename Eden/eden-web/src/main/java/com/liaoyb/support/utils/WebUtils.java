@@ -1,12 +1,17 @@
 package com.liaoyb.support.utils;
 
+import com.liaoyb.base.domain.Page;
 import com.liaoyb.persistence.domain.dto.UserDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
 
 public class WebUtils {
 	private static final String SESSION_KEY_CURRENT_USER ="SESSION_KEY_CURRENT_USER";
@@ -17,29 +22,9 @@ public class WebUtils {
 	public static final String CONTENT_CHARSET_UTF8 = "UTF-8";
 	public static final String CONTENTTYPE_TEXTHTML = "text/html";
 
-	public static void sendDirectToClient(HttpServletResponse response, String contenttypeTextjson,
-										  String contentCharsetUtf8, String jsonResult) {
-		try {
-			response.setCharacterEncoding(contentCharsetUtf8);
-			response.setContentType(contenttypeTextjson);
-			Writer writer = response.getWriter();
-			writer.write(jsonResult);
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public static Logger logger= LoggerFactory.getLogger(WebUtils.class);
 
-	}
 
-	/**
-	 * 当前请求是否为ajax异步请求。
-	 * @param request 当前request
-	 * @return 如果当前请求为ajax请求，返回true，否则返回false
-	 */
-	public static boolean isAjaxRequest(HttpServletRequest request) {
-		return "XMLHttpRequest".equalsIgnoreCase(request
-				.getHeader("x-requested-with"));
-	}
 
 
 
@@ -108,5 +93,29 @@ public class WebUtils {
 	public static String baseUrl(HttpServletRequest request){
 		return request.getRequestURL().substring(0,request.getRequestURL().indexOf(request.getServletPath()));
 	}
+
+
+	/**
+	 * 设置分页参数
+	 * @param page
+	 * @param request
+     */
+	public static void setPage(Page page,HttpServletRequest request){
+		String strStart=request.getParameter("start");
+		String strLength=request.getParameter("length");
+		if(strLength!=null&&strStart!=null){
+			Integer start=Integer.valueOf(request.getParameter("start"));
+			Integer length=Integer.valueOf(request.getParameter("length"));
+			if(page!=null){
+				Integer pageNumber=start/length+1;
+				page.setPageNumber(pageNumber);
+				page.setPageSize(length);
+			}
+		}
+
+	}
+
+
+
 
 }

@@ -9,7 +9,8 @@ public enum  UserRoleTypeEnum {
     //用户
     User(1L),
     //管理员
-    Admin(2L);
+    Admin(2L),
+    AdvancedAdmin(3L);
     private Long value;
 
     private UserRoleTypeEnum(Long value) {

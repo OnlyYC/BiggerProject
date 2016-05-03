@@ -2,12 +2,19 @@ package com.liaoyb.persistence.serviceImpl;
 
 import com.liaoyb.base.annotation.PageAnnotation;
 import com.liaoyb.base.domain.Page;
+import com.liaoyb.persistence.dao.base.MessMapper;
+import com.liaoyb.persistence.dao.base.UserMapper;
 import com.liaoyb.persistence.dao.custom.MessMapperCustom;
 import com.liaoyb.persistence.domain.vo.base.Mess;
+import com.liaoyb.persistence.domain.vo.base.User;
 import com.liaoyb.persistence.service.MessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+
+import java.util.Date;
 
 /**
  * @author ybliao2
@@ -18,6 +25,13 @@ public class MessServiceImpl implements MessService {
 
     @Autowired
     private MessMapperCustom messMapperCustom;
+
+    @Autowired
+    private UserMapper userMapper;
+
+
+    @Autowired
+    private MessMapper messMapper;
     /**
      * 用户的所有消息
      *
@@ -76,6 +90,35 @@ public class MessServiceImpl implements MessService {
         if(affect==messId.length){
             return true;
         }
+        return false;
+    }
+
+    /**
+     * 发送消息
+     *
+     * @param mess
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean sendMess(Mess mess) {
+        Assert.notNull(mess);
+        Assert.notNull(mess.getFromUser());
+        Assert.notNull(mess.getToUser());
+        Assert.hasLength(mess.getContent());
+        mess.setDate(new Date().getTime());
+        //如果发送方头像，名称为空，先设置头像
+        if(!StringUtils.hasLength(mess.getFromUserAvatar())||!StringUtils.hasLength(mess.getFromUserName())){
+            User fromUser=userMapper.selectByPrimaryKey(mess.getFromUser());
+            mess.setFromUserAvatar(fromUser.getAvatarUrl());
+            mess.setFromUserName(fromUser.getName());
+        }
+
+        int affect=messMapper.insertSelective(mess);
+        if(affect>0){
+            return true;
+        }
+
         return false;
     }
 }

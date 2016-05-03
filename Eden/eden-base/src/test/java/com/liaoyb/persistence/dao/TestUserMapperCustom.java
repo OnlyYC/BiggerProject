@@ -48,4 +48,10 @@ public class TestUserMapperCustom extends SpringTest {
         UserInfo userInfo = userMapperCustom.findUserInfo(1L);
         System.out.println("userInfo:" + userInfo);
     }
+
+    //生成用户推荐
+    @Test
+    public void testGenerateTipList(){
+        userMapperCustom.generateTipList();
+    }
 }

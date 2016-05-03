@@ -156,6 +156,13 @@ public interface SongMapperCustom {
     public int addOneSongCollectCount(Long songId);
 
     /**
+     * 对歌曲下载量加1
+     * @param songId
+     * @return
+     */
+    int addOneSongDownloadCount(Long songId);
+
+    /**
      * 随机
      * @param userId
      * @param type

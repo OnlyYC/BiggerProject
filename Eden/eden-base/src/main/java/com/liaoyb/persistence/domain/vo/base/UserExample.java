@@ -1023,6 +1023,256 @@ public class UserExample {
             addCriterion("state not between", value1, value2, "state");
             return (Criteria) this;
         }
+
+        public Criteria andUserTypeIsNull() {
+            addCriterion("userType is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeIsNotNull() {
+            addCriterion("userType is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeEqualTo(Long value) {
+            addCriterion("userType =", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeNotEqualTo(Long value) {
+            addCriterion("userType <>", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeGreaterThan(Long value) {
+            addCriterion("userType >", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeGreaterThanOrEqualTo(Long value) {
+            addCriterion("userType >=", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeLessThan(Long value) {
+            addCriterion("userType <", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeLessThanOrEqualTo(Long value) {
+            addCriterion("userType <=", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeIn(List<Long> values) {
+            addCriterion("userType in", values, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeNotIn(List<Long> values) {
+            addCriterion("userType not in", values, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeBetween(Long value1, Long value2) {
+            addCriterion("userType between", value1, value2, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeNotBetween(Long value1, Long value2) {
+            addCriterion("userType not between", value1, value2, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateIsNull() {
+            addCriterion("onlineState is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateIsNotNull() {
+            addCriterion("onlineState is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateEqualTo(Long value) {
+            addCriterion("onlineState =", value, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateNotEqualTo(Long value) {
+            addCriterion("onlineState <>", value, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateGreaterThan(Long value) {
+            addCriterion("onlineState >", value, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateGreaterThanOrEqualTo(Long value) {
+            addCriterion("onlineState >=", value, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateLessThan(Long value) {
+            addCriterion("onlineState <", value, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateLessThanOrEqualTo(Long value) {
+            addCriterion("onlineState <=", value, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateIn(List<Long> values) {
+            addCriterion("onlineState in", values, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateNotIn(List<Long> values) {
+            addCriterion("onlineState not in", values, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateBetween(Long value1, Long value2) {
+            addCriterion("onlineState between", value1, value2, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOnlineStateNotBetween(Long value1, Long value2) {
+            addCriterion("onlineState not between", value1, value2, "onlineState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIsNull() {
+            addCriterion("token is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIsNotNull() {
+            addCriterion("token is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenEqualTo(String value) {
+            addCriterion("token =", value, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenNotEqualTo(String value) {
+            addCriterion("token <>", value, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenGreaterThan(String value) {
+            addCriterion("token >", value, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenGreaterThanOrEqualTo(String value) {
+            addCriterion("token >=", value, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenLessThan(String value) {
+            addCriterion("token <", value, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenLessThanOrEqualTo(String value) {
+            addCriterion("token <=", value, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenLike(String value) {
+            addCriterion("token like", value, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenNotLike(String value) {
+            addCriterion("token not like", value, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIn(List<String> values) {
+            addCriterion("token in", values, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenNotIn(List<String> values) {
+            addCriterion("token not in", values, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenBetween(String value1, String value2) {
+            addCriterion("token between", value1, value2, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenNotBetween(String value1, String value2) {
+            addCriterion("token not between", value1, value2, "token");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeIsNull() {
+            addCriterion("lastActivityTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeIsNotNull() {
+            addCriterion("lastActivityTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeEqualTo(Long value) {
+            addCriterion("lastActivityTime =", value, "lastActivityTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeNotEqualTo(Long value) {
+            addCriterion("lastActivityTime <>", value, "lastActivityTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeGreaterThan(Long value) {
+            addCriterion("lastActivityTime >", value, "lastActivityTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("lastActivityTime >=", value, "lastActivityTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeLessThan(Long value) {
+            addCriterion("lastActivityTime <", value, "lastActivityTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeLessThanOrEqualTo(Long value) {
+            addCriterion("lastActivityTime <=", value, "lastActivityTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeIn(List<Long> values) {
+            addCriterion("lastActivityTime in", values, "lastActivityTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeNotIn(List<Long> values) {
+            addCriterion("lastActivityTime not in", values, "lastActivityTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeBetween(Long value1, Long value2) {
+            addCriterion("lastActivityTime between", value1, value2, "lastActivityTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastActivityTimeNotBetween(Long value1, Long value2) {
+            addCriterion("lastActivityTime not between", value1, value2, "lastActivityTime");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

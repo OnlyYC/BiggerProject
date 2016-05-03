@@ -23,6 +23,19 @@
 
     </resultMap>
 
+
+    <!--当用户信息修改后更新歌单相关信息-->
+    <update id="updateSonglistWhenUserInfoUpdate">
+
+        UPDATE songlist
+        <set>
+            <if test="user.name!=null">
+                username=#{user.name},
+            </if>
+        </set>
+        where userId=#{user.id}
+    </update>
+
     <!--歌单推荐,根据播放量，收藏量,普通歌单-->
     <select id="findSonglistRecommend" resultType="com.liaoyb.persistence.domain.vo.base.Songlist">
         select * from songlist where type=1 order by (collectCount*0.7+playCount*0.3) desc
@@ -96,6 +109,7 @@
          songlist sl
          WHERE sl.flag=1
          AND sl.listName!='我喜欢'
+         AND sl.type!=4
          AND (
          sl.listName like CONCAT(CONCAT('%',#{searchText}),'%')
          OR sl.info like CONCAT(CONCAT('%',#{searchText}),'%')

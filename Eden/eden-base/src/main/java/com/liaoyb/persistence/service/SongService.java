@@ -1,8 +1,14 @@
 package com.liaoyb.persistence.service;
 
+import com.alibaba.dubbo.remoting.ExecutionException;
 import com.liaoyb.base.domain.Page;
+import com.liaoyb.base.support.exception.SourcesNotFoundException;
 import com.liaoyb.persistence.domain.dto.SongDto;
+import com.liaoyb.persistence.domain.vo.base.Song;
 import com.liaoyb.persistence.domain.vo.custom.SongCustom;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 歌曲service
@@ -155,4 +161,28 @@ public interface SongService {
      * @return
      */
     Page<SongDto> findSongDtoRandom(Page<SongDto> page, Long userId, Long type);
+
+
+    /**
+     * 音乐下载
+     * @param request
+     * @param response
+     * @param songId
+     */
+    void download(HttpServletRequest request, HttpServletResponse response,Long songId) throws Exception;
+
+
+    /**
+     * 添加歌曲
+     * @param song
+     * @throws Exception
+     */
+    void addSong(Song song)throws Exception;
+
+    /**
+     * 编辑歌曲
+     * @param song
+     * @throws Exception
+     */
+    void updateSong(Song song)throws Exception;
 }

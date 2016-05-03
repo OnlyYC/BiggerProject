@@ -13,5 +13,15 @@ public interface FileStoreService extends DirectFileService,DvancedFileService {
     FileCloudInfo getFileCLoudInfo(String key)throws Exception;
 
 
+    /**
+     * 添加文件的信息
+     * @param originalfileName
+     * @param fileSize
+     * @return
+     */
+    FileCloudInfo addFileInfo(String originalfileName,Integer fileSize);
+
+
+
 
 }

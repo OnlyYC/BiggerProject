@@ -22,6 +22,14 @@ public interface UserMapperCustom {
     public UserInfo findUserInfo(@Param("userId") Long userId);
 
 
+    /**
+     * 用户权限
+     * @param userId
+     * @return
+     */
+    public UserDto findUserDto(@Param("userId")Long userId);
+
+
 
     /**
      * 用户听歌排行,分页
@@ -148,4 +156,34 @@ public interface UserMapperCustom {
      * @return
      */
     List<User> findUser(String searchText);
+
+
+
+
+    /**
+     * 用户登录超时检测
+     * @return
+     */
+    int sessionTimeOutDetect();
+
+
+
+    /**
+     * 生成用户推荐，调用存储过程
+     */
+    void generateTipList();
+
+
+    /**
+     * 统计用户偏好
+     */
+    void generateUserPreference();
+
+
+
+    /**
+     * 管理员
+     * @return
+     */
+    List<User>findManager();
 }
